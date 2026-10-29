@@ -25,10 +25,11 @@ Python 3.13+ with [uv](https://docs.astral.sh/uv/). Package name: `chumba-labs`.
 | --- | --- |
 | `main.py` | CLI: `health` and `hplc-demo`. |
 | `agent/` | Spark tool loop and the offline method search that uses the same HPLC tools. |
-| `api/` | Handlers the CLI prints: a health check and the HPLC demo payload. |
+| `api/` | FastAPI server (`api/server.py`) and route handlers used by the CLI and UI. |
 | `chromatography/` | Shared types and SMILES descriptors; HPLC catalog, simulation, and scoring; GC-MS plugin. |
 | `modal/` | Modal app `chumba-labs`: remote HPLC score plus small HTTP score endpoints. |
 | `tests/` | Pytest for HPLC scoring, the GC-MS proxy, and the agent loop. |
+| `chumbalabs/` | Vite + Vue + TypeScript method-development workstation (local dev). |
 | `context/` | Hackathon scope and event notes. |
 
 Run commands from the repository root.
@@ -77,6 +78,28 @@ uv run modal run modal/deploy.py
 That runs `hplc_demo` on Modal CPU and prints resolution, run time, `passed`, penalties, and peak times for the default three analytes. It does not call Muse Spark. The app also defines HTTP score endpoints; `modal run` only executes the local entrypoint.
 
 The commands above are the same in bash. To set the key in the shell instead of `.env`: PowerShell uses `$env:MODEL_API_KEY = "your-api-key-here"`; bash uses `export MODEL_API_KEY="your-api-key-here"`.
+
+## Frontend
+
+Local UI in `chumbalabs/`: a three-column workstation (input, method/scores/chromatogram, agent timeline). Layout and API types are documented in [chumbalabs/README.md](chumbalabs/README.md).
+
+Run the API and the dev server in **two terminals** from the repository root.
+
+Terminal 1 — FastAPI on port 8000:
+
+```powershell
+uv run uvicorn api.server:app --reload --port 8000
+```
+
+Terminal 2 — Vite (proxies `/api` → `http://127.0.0.1:8000`):
+
+```powershell
+cd chumbalabs
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. **Run agent** sends `POST /api/hplc/run` with analytes and goals; the UI renders method parameters, score cards, a chromatogram, and Spark tool steps. Root `.env` supplies `MODEL_API_KEY` / `META_API_KEY` to the API process, not to Vite.
 
 ## Demo output
 

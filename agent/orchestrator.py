@@ -89,6 +89,18 @@ def _step(name: str, output: Any) -> dict[str, Any]:
     return {"tool": name, "output": output}
 
 
+def _history_entry(
+    method: dict[str, Any],
+    simulation: dict[str, Any],
+    score: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "method": score.get("method") or method,
+        "simulation": score.get("simulation") or simulation,
+        "score": score,
+    }
+
+
 def run_local(goals: Goals) -> dict[str, Any]:
     analytes = goals_to_dict(goals)["analytes"]
     goals_payload = goals_to_dict(goals)
@@ -96,6 +108,7 @@ def run_local(goals: Goals) -> dict[str, Any]:
     best_score: dict[str, Any] | None = None
     best_simulation: dict[str, Any] = {}
     best_method: dict[str, Any] = {}
+    history: list[dict[str, Any]] = []
     for method in _bounded_methods()[:MAX_AGENT_STEPS]:
         simulation = simulate_hplc(analytes, method)
         steps.append(_step("simulate_hplc", simulation))
@@ -103,6 +116,7 @@ def run_local(goals: Goals) -> dict[str, Any]:
             continue
         score = score_hplc(goals_payload, method, simulation)
         steps.append(_step("score_hplc", score))
+        history.append(_history_entry(method, simulation, score))
         if _better(score, best_score):
             best_score = score
             best_simulation = simulation
@@ -114,6 +128,8 @@ def run_local(goals: Goals) -> dict[str, Any]:
         "simulation": best_simulation,
         "score": best_score or {},
         "steps": steps,
+        "history": history,
+        "explanation": "",
     }
 
 
@@ -183,8 +199,11 @@ def run_spark(goals: Goals) -> dict[str, Any]:
         ),
     ]
     steps: list[dict[str, Any]] = []
-    score: dict[str, Any] | None = None
-    simulation: dict[str, Any] | None = None
+    best_score: dict[str, Any] | None = None
+    best_simulation: dict[str, Any] | None = None
+    best_method: dict[str, Any] | None = None
+    history: list[dict[str, Any]] = []
+    last_simulation: dict[str, Any] | None = None
     explanation = ""
     max_model_turns = MAX_AGENT_STEPS + 4
 
@@ -196,7 +215,7 @@ def run_spark(goals: Goals) -> dict[str, Any]:
             explanation = text
         tool_calls = getattr(ai, "tool_calls", None) or []
         if not tool_calls:
-            if score is not None:
+            if best_score is not None:
                 break
             continue
         for call in tool_calls:
@@ -213,20 +232,30 @@ def run_spark(goals: Goals) -> dict[str, Any]:
                 )
             )
             if name == "simulate_hplc" and isinstance(payload, dict) and "peaks" in payload:
-                simulation = payload
+                last_simulation = payload
             if name == "score_hplc" and isinstance(payload, dict) and "min_resolution" in payload:
-                score = payload
+                method = payload.get("method") or {}
+                sim = payload.get("simulation") or last_simulation or {}
+                history.append(_history_entry(method, sim, payload))
+                if _better(payload, best_score):
+                    best_score = payload
+                    best_simulation = sim
+                    best_method = method
 
-    if score is None:
+    if best_score is None:
         raise RuntimeError("Spark returned no score_hplc tool result")
-    if simulation is None:
-        simulation = score.get("simulation", {})
-    method = score.get("method") or (simulation.get("method") if isinstance(simulation, dict) else {})
+    if best_simulation is None:
+        best_simulation = best_score.get("simulation", {})
+    if best_method is None:
+        best_method = best_score.get("method") or (
+            best_simulation.get("method") if isinstance(best_simulation, dict) else {}
+        )
     return {
-        "method": method,
-        "simulation": simulation,
-        "score": score,
+        "method": best_method,
+        "simulation": best_simulation,
+        "score": best_score,
         "steps": steps,
+        "history": history,
         "explanation": explanation,
     }
 
