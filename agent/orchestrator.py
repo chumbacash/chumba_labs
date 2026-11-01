@@ -24,7 +24,7 @@ MIN_RETRY_RESOLUTION = 2.0
 
 
 def meta_model_api_key() -> str | None:
-    return os.environ.get("MODEL_API_KEY") or os.environ.get("META_API_KEY")
+    return os.environ.get("META_API_KEY") or os.environ.get("MODEL_API_KEY")
 
 def _system_prompt() -> str:
     example = json.dumps(method_to_dict(default_hplc_method()))
@@ -62,9 +62,9 @@ def demo_goals() -> Goals:
         max_run_time_min=12.0,
         min_resolution=1.5,
         analytes=[
-            Analyte(name="A", smiles="CCO"),
-            Analyte(name="B", smiles="CC(=O)O"),
-            Analyte(name="C", smiles="c1ccccc1"),
+            Analyte(name="acetaminophen", smiles="CC(=O)Nc1ccc(O)cc1"),
+            Analyte(name="caffeine", smiles="Cn1cnc2c1c(=O)n(C)c(=O)n2C"),
+            Analyte(name="aspirin", smiles="CC(=O)Oc1ccccc1C(=O)O"),
         ],
     )
 
@@ -241,9 +241,11 @@ def _with_goal_analytes(name: str, args: dict[str, Any], goals: Goals) -> dict[s
         else:
             merged = dict(raw_goals)
             merged["analytes"] = _merge_analytes(merged.get("analytes"), goal_analytes)
-            merged.setdefault("max_run_time_min", goals.max_run_time_min)
-            merged.setdefault("min_resolution", goals.min_resolution)
-            merged.setdefault("modality", goals.modality)
+            # User goals are authoritative; a model-chosen target must not
+            # change what "passed" means in the result.
+            merged["max_run_time_min"] = goals.max_run_time_min
+            merged["min_resolution"] = goals.min_resolution
+            merged["modality"] = goals.modality
             prepared["goals"] = merged
     return prepared
 

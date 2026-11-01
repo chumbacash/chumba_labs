@@ -1,5 +1,6 @@
 from typing import Any
 
+from chromatography.common.smiles import validate_smiles
 from chromatography.common.types import Analyte, Goals
 
 from agent.orchestrator import (
@@ -33,7 +34,11 @@ def goals_from_body(body: dict[str, Any]) -> Goals | dict[str, str]:
     for item in raw_analytes:
         if not isinstance(item, dict) or "name" not in item or "smiles" not in item:
             return {"error": "each analyte needs name and smiles"}
-        analytes.append(Analyte(name=str(item["name"]), smiles=str(item["smiles"])))
+        name = str(item["name"])
+        smiles = str(item["smiles"])
+        if not validate_smiles(smiles):
+            return {"error": f"invalid SMILES for {name}: {smiles}"}
+        analytes.append(Analyte(name=name, smiles=smiles))
     return Goals(
         modality=modality,
         max_run_time_min=max_run_time_min,
@@ -153,4 +158,13 @@ def hplc_run_from_body(body: dict[str, Any]) -> tuple[int, dict[str, Any]]:
         result = run_hplc_iteration(goals, user_instruction=follow_up)
     except RuntimeError as exc:
         return 502, {"error": str(exc)}
-    return 200, hplc_run_payload(goals, result)
+    payload = hplc_run_payload(goals, result)
+    if payload.get("min_resolution") is None:
+        error = {
+            "error": "agent produced no scorable method",
+            "path": payload.get("path"),
+        }
+        if payload.get("spark_error"):
+            error["spark_error"] = payload["spark_error"]
+        return 502, error
+    return 200, payload

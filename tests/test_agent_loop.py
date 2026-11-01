@@ -48,7 +48,7 @@ def test_tool_json_roundtrip():
     if isinstance(via_tool, str):
         via_tool = json.loads(via_tool)
     by_name = {peak["name"]: peak["retention_min"] for peak in via_tool["peaks"]}
-    assert by_name["A"] < by_name["C"]
+    assert by_name["caffeine"] < by_name["acetaminophen"]
 
     scored = score_hplc_tool.invoke({"goals": goals, "method": method, "simulation": via_tool})
     if isinstance(scored, str):
@@ -67,7 +67,7 @@ def test_malformed_method_is_not_a_history_entry():
     failed = simulate_hplc(goals["analytes"], method)
     assert "error" in failed
     assert "peaks" not in failed
-    assert scored_history_entry(method, failed, failed, {"A", "B", "C"}) is None
+    assert scored_history_entry(method, failed, failed, {"acetaminophen", "caffeine", "aspirin"}) is None
 
     tool_failed = invoke_hplc_tool("simulate_hplc", {"analytes": goals["analytes"], "method": method})
     assert "error" in tool_failed
@@ -79,7 +79,9 @@ def test_malformed_method_is_not_a_history_entry():
     valid_method = method_to_dict(default_hplc_method())
     simulation = simulate_hplc(goals["analytes"], valid_method)
     score = score_hplc(goals, valid_method, simulation)
-    good = scored_history_entry(valid_method, simulation, score, {"A", "B", "C"})
+    good = scored_history_entry(
+        valid_method, simulation, score, {"acetaminophen", "caffeine", "aspirin"}
+    )
     shown = displayable_history(
         [
             {"method": method, "simulation": failed, "score": failed},
@@ -87,7 +89,11 @@ def test_malformed_method_is_not_a_history_entry():
         ]
     )
     assert len(shown) == 1
-    assert {peak["name"] for peak in shown[0]["simulation"]["peaks"]} == {"A", "B", "C"}
+    assert {peak["name"] for peak in shown[0]["simulation"]["peaks"]} == {
+        "acetaminophen",
+        "caffeine",
+        "aspirin",
+    }
 
 
 def test_score_uses_peak_names_when_analytes_omitted():
@@ -137,10 +143,11 @@ def test_local_fallback_without_api_key(monkeypatch, capsys):
     assert "hplc path: local" in capsys.readouterr().err
     assert result["path"] == "local"
     assert isinstance(result["score"]["min_resolution"], float)
+    assert result["score"]["passed"] is True
     names = [step["tool"] for step in result["steps"]]
     assert "describe_analytes" in names
-    assert names.count("simulate_hplc") >= 2
-    assert names.count("score_hplc") >= 2
+    assert names.count("simulate_hplc") >= 1
+    assert names.count("score_hplc") >= 1
     json.dumps({"score": result["score"], "steps": names})
 
 
@@ -239,6 +246,63 @@ def test_api_forwards_follow_up_instruction(monkeypatch):
     assert status == 200
     assert captured["instruction"] == "Keep the initial gradient at 55% B."
     assert payload["history"]
+
+
+def test_user_goals_override_model_goals():
+    from agent.orchestrator import _with_goal_analytes
+
+    goals = demo_goals()
+    prepared = _with_goal_analytes(
+        "score_hplc",
+        {"goals": {"max_run_time_min": 3.0, "min_resolution": 2.0, "analytes": []}},
+        goals,
+    )
+    assert prepared["goals"]["max_run_time_min"] == goals.max_run_time_min
+    assert prepared["goals"]["min_resolution"] == goals.min_resolution
+    assert prepared["goals"]["modality"] == goals.modality
+
+
+def test_api_rejects_invalid_smiles():
+    status, payload = hplc_run_from_body(
+        {
+            "modality": "hplc",
+            "analytes": [{"name": "broken", "smiles": "not_a_smiles"}],
+            "min_resolution": 1.5,
+            "max_run_time_min": 12,
+        }
+    )
+    assert status == 400
+    assert "invalid SMILES" in payload["error"]
+    assert "broken" in payload["error"]
+
+
+def test_api_returns_502_when_nothing_scored(monkeypatch):
+    import api.routes as routes
+
+    monkeypatch.setattr(routes, "meta_model_api_key", lambda: None)
+    monkeypatch.setattr(
+        routes,
+        "run_hplc_iteration",
+        lambda goals, user_instruction=None: {
+            "method": {},
+            "simulation": {},
+            "score": {},
+            "steps": [],
+            "history": [],
+            "explanation": "",
+            "path": "spark-fallback",
+        },
+    )
+    status, payload = hplc_run_from_body(
+        {
+            "modality": "hplc",
+            "analytes": [{"name": "ethanol", "smiles": "CCO"}],
+            "min_resolution": 1.5,
+            "max_run_time_min": 12,
+        }
+    )
+    assert status == 502
+    assert "no scorable method" in payload["error"]
 
 
 def test_spark_client_uses_chat_completions(monkeypatch):

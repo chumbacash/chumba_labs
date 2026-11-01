@@ -60,9 +60,9 @@ def score_request(body: dict[str, Any] | None = None) -> dict[str, Any]:
 
     payload = body or {}
     raw_analytes = payload.get("analytes") or [
-        {"name": "A", "smiles": "CCO"},
-        {"name": "B", "smiles": "CC(=O)O"},
-        {"name": "C", "smiles": "c1ccccc1"},
+        {"name": "acetaminophen", "smiles": "CC(=O)Nc1ccc(O)cc1"},
+        {"name": "caffeine", "smiles": "Cn1cnc2c1c(=O)n(C)c(=O)n2C"},
+        {"name": "aspirin", "smiles": "CC(=O)Oc1ccccc1C(=O)O"},
     ]
     analytes = [Analyte(name=item["name"], smiles=item["smiles"]) for item in raw_analytes]
     goals = Goals(

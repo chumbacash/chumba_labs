@@ -14,9 +14,9 @@ const modality = ref<Modality>('hplc')
 const minResolution = ref(1.5)
 const maxRunTime = ref(12)
 const analytes = ref<AnalyteInput[]>([
-  { name: 'A', smiles: 'CCO' },
-  { name: 'B', smiles: 'CC(=O)O' },
-  { name: 'C', smiles: 'c1ccccc1' },
+  { name: 'acetaminophen', smiles: 'CC(=O)Nc1ccc(O)cc1' },
+  { name: 'caffeine', smiles: 'Cn1cnc2c1c(=O)n(C)c(=O)n2C' },
+  { name: 'aspirin', smiles: 'CC(=O)Oc1ccccc1C(=O)O' },
 ])
 
 const newName = ref('')
