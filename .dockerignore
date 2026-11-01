@@ -1,0 +1,29 @@
+# VCS and CI
+.git
+.github
+.gitignore
+
+# Python caches and local environment
+.venv
+.pytest_cache
+__pycache__
+*.py[cod]
+*.egg-info
+
+# Secrets
+.env
+.env.*
+
+# Local logs
+stderr.txt
+stdout*.txt
+*_stderr.txt
+*_stdout.txt
+
+# Not needed in the API image
+frontend
+context
+modal
+tests
+*.md
+!README.md

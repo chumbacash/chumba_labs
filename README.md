@@ -28,6 +28,8 @@ modal/            Modal app and HTTP score endpoints
 tests/            pytest
 frontend/         Vue + TypeScript workstation
 context/          scope and event notes
+.github/          CI and GHCR publish workflows
+Dockerfile        API container image
 ```
 
 Run commands from the repository root.
@@ -94,6 +96,26 @@ npm run dev
 ```
 
 Vite proxies `/api` → `http://127.0.0.1:8000`. Open http://localhost:5173. **Run agent** sends `POST /api/hplc/run` with analytes and goals; the UI renders method parameters, score cards, a chromatogram, and Spark tool steps. Root `.env` supplies `META_API_KEY` (`MODEL_API_KEY` also works) to the API process, not to Vite.
+
+## Docker and CI
+
+Build and run the API image:
+
+```powershell
+docker build -t chumba-labs .
+docker run --rm -p 8000:8000 --env-file .env chumba-labs
+```
+
+`GET /api/health` returns `{"status":"ok"}`. The image installs runtime dependencies only, runs as a non-root user, and excludes `frontend/`, `tests/`, `context/`, and `modal/`.
+
+GitHub Actions:
+
+- `.github/workflows/ci.yml` runs pytest, the Vue build, and a Docker health smoke test on pushes and pull requests.
+- `.github/workflows/publish.yml` builds the image on PRs and pushes it to GHCR on `main` and `v*` tags:
+
+```powershell
+docker run --rm -p 8000:8000 -e META_API_KEY=your-api-key-here ghcr.io/chumbacash/chumba-labs:latest
+```
 
 ## Demo output
 
