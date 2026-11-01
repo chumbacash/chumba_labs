@@ -15,7 +15,7 @@ GC-MS elution uses a separate boiling-point proxy from the same descriptors. It 
 Python 3.13+ with [uv](https://docs.astral.sh/uv/). Package name: `chumba-labs`.
 
 - **RDKit** computes the descriptors used by HPLC simulation and the GC-MS proxy.
-- **LangChain tool calling** ([LangChain](https://docs.langchain.com/)) binds HPLC tools to Chat Completions. The Spark loop is capped (about five simulate/score rounds, plus a few extra model turns).
+- **LangChain tool calling** ([LangChain](https://docs.langchain.com/)) binds HPLC tools to Chat Completions. The Spark loop is capped at five scored methods and retries when the requested goals are missed or resolution is below 2.0. Only the listed C18 columns are modeled.
 - **Meta Model API** ([overview](https://dev.meta.ai/docs/overview)): base URL `https://api.meta.ai/v1`, model `muse-spark-1.3`.
 - **Modal** ([intro](https://modal.com/docs/guide/intro)): CPU image (`debian_slim`, Python 3.13) runs RDKit simulate and score. No GPU.
 
@@ -29,7 +29,7 @@ Python 3.13+ with [uv](https://docs.astral.sh/uv/). Package name: `chumba-labs`.
 | `chromatography/` | Shared types and SMILES descriptors; HPLC catalog, simulation, and scoring; GC-MS plugin. |
 | `modal/` | Modal app `chumba-labs`: remote HPLC score plus small HTTP score endpoints. |
 | `tests/` | Pytest for HPLC scoring, the GC-MS proxy, and the agent loop. |
-| `chumbalabs/` | Vite + Vue + TypeScript method-development workstation (local dev). |
+| `frontend/` | Vite + Vue + TypeScript method-development workstation (local dev). |
 | `context/` | Hackathon scope and event notes. |
 
 Run commands from the repository root.
@@ -81,7 +81,7 @@ The commands above are the same in bash. To set the key in the shell instead of 
 
 ## Frontend
 
-Local UI in `chumbalabs/`: a three-column workstation (input, method/scores/chromatogram, agent timeline). Layout and API types are documented in [chumbalabs/README.md](chumbalabs/README.md).
+Local UI in `frontend/`: a three-column workstation (input, method/scores/chromatogram, agent timeline). Layout and API types are documented in [frontend/README.md](frontend/README.md).
 
 Run the API and the dev server in **two terminals** from the repository root.
 
@@ -94,7 +94,7 @@ uv run uvicorn api.server:app --reload --port 8000
 Terminal 2 — Vite (proxies `/api` → `http://127.0.0.1:8000`):
 
 ```powershell
-cd chumbalabs
+cd frontend
 npm install
 npm run dev
 ```

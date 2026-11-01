@@ -2,7 +2,13 @@ from typing import Any
 
 from chromatography.common.types import Analyte, Goals
 
-from agent.orchestrator import demo_goals, run_hplc_iteration
+from agent.orchestrator import (
+    best_history_entry,
+    demo_goals,
+    displayable_history,
+    meta_model_api_key,
+    run_hplc_iteration,
+)
 
 
 def health() -> dict:
@@ -50,18 +56,28 @@ def _simulation_for_ui(simulation: dict[str, Any]) -> dict[str, Any]:
 
 
 def hplc_run_payload(goals: Goals, result: dict[str, Any]) -> dict[str, Any]:
-    score = result.get("score") or {}
-    simulation = _simulation_for_ui(result.get("simulation") or {})
-    method = result.get("method") or score.get("method") or {}
-    history = result.get("history") or []
-    if not history and score:
-        history = [
-            {
-                "method": method,
-                "simulation": simulation,
-                "score": score,
-            }
-        ]
+    history = displayable_history(result.get("history") or [])
+    best = best_history_entry(history)
+    if best is None:
+        fallback = displayable_history(
+            [
+                {
+                    "method": result.get("method") or {},
+                    "simulation": result.get("simulation") or {},
+                    "score": result.get("score") or {},
+                }
+            ]
+        )
+        history = fallback
+        best = best_history_entry(history)
+    if best:
+        score = best["score"]
+        simulation = best["simulation"]
+        method = best["method"]
+    else:
+        score = {}
+        simulation = _simulation_for_ui({})
+        method = {}
     payload: dict[str, Any] = {
         "path": result.get("path", "local"),
         "modality": goals.modality,
@@ -127,5 +143,14 @@ def hplc_run_from_body(body: dict[str, Any]) -> tuple[int, dict[str, Any]]:
     assert isinstance(goals, Goals)
     if goals.modality == "gc_ms":
         return 200, gc_ms_not_implemented_payload(goals)
-    result = run_hplc_iteration(goals)
+    follow_up = body.get("follow_up")
+    if follow_up is not None and not isinstance(follow_up, str):
+        return 400, {"error": "follow_up must be a string"}
+    follow_up = follow_up.strip() if follow_up else None
+    if follow_up and not meta_model_api_key():
+        return 400, {"error": "Follow-up instructions require the Meta Model API key"}
+    try:
+        result = run_hplc_iteration(goals, user_instruction=follow_up)
+    except RuntimeError as exc:
+        return 502, {"error": str(exc)}
     return 200, hplc_run_payload(goals, result)

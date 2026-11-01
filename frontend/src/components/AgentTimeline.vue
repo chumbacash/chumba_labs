@@ -35,6 +35,20 @@ function sendFollowUp() {
   emit('followUp', text)
   followUp.value = ''
 }
+
+function stepError(output: unknown): string | null {
+  let value = output
+  if (typeof value === 'string') {
+    try {
+      value = JSON.parse(value)
+    } catch {
+      return null
+    }
+  }
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null
+  const error = (value as { error?: unknown }).error
+  return typeof error === 'string' && error ? error : null
+}
 </script>
 
 <template>
@@ -44,15 +58,19 @@ function sendFollowUp() {
       <span class="path-tag">{{ path }}</span>
     </header>
 
-    <p v-if="loading" class="loading-line">Agent running…</p>
+    <p v-if="loading" class="loading-line">
+      <span class="spinner"></span>Agent running…
+    </p>
     <p v-if="sparkError" class="warn">Spark fallback: {{ sparkError }}</p>
 
     <ol class="timeline">
-      <li v-for="(step, i) in steps" :key="i" class="timeline-item">
-        <button type="button" class="tool-card" @click="toggle(i)">
+      <li v-for="(step, i) in steps" :key="i" class="timeline-item" :class="{ error: stepError(step.output) }">
+        <button type="button" class="tool-card" :class="{ error: stepError(step.output) }" @click="toggle(i)">
           <span class="tool-name">{{ step.tool }}</span>
+          <span v-if="stepError(step.output)" class="tool-flag">error</span>
           <span class="chevron">{{ open[i] ? '▼' : '▶' }}</span>
         </button>
+        <p v-if="stepError(step.output)" class="tool-error">{{ stepError(step.output) }}</p>
         <pre v-if="open[i]" class="tool-json">{{ prettyJson(step.output) }}</pre>
       </li>
     </ol>

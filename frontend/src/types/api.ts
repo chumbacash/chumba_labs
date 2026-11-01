@@ -10,6 +10,7 @@ export interface RunRequest {
   analytes: AnalyteInput[]
   max_run_time_min: number
   min_resolution: number
+  follow_up?: string
 }
 
 export interface SimulatedPeak {

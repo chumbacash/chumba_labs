@@ -18,7 +18,7 @@ uv run uvicorn api.server:app --reload --port 8000
 In a second terminal:
 
 ```powershell
-cd chumbalabs
+cd frontend
 npm install
 npm run dev
 ```
@@ -54,6 +54,9 @@ The UI uses relative URLs so the dev proxy works.
   - `modality`: `"hplc"` or `"gc_ms"`
   - `analytes`: `{ name, smiles }[]`
   - `min_resolution`, `max_run_time_min`
+  - optional `follow_up`: a note to Spark for a follow-up run; it requires a Meta Model API key
 - **Response** (`RunResponse`): final method, simulation, score, optional `history` of proposals, `steps` from tool calls, `path` (`spark` / `local` / `spark-fallback`), and optional `explanation`.
+
+Spark retries scored methods when the goals are missed or resolution is below 2.0, up to five scored methods. The simulator models only the listed C18 columns; it does not support conclusions about other stationary phases.
 
 Types in `src/types/api.ts` should stay aligned with the FastAPI handlers in `api/`.

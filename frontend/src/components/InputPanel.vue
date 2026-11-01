@@ -98,6 +98,7 @@ function submit() {
     </section>
 
     <button type="button" class="btn-primary run-btn" :disabled="loading || analytes.length === 0" @click="submit">
+      <span v-if="loading" class="spinner"></span>
       {{ loading ? 'Running agent…' : 'Run agent' }}
     </button>
   </aside>

@@ -3,9 +3,12 @@ import { computed, ref } from 'vue'
 import AgentTimeline from './components/AgentTimeline.vue'
 import Chromatogram from './components/Chromatogram.vue'
 import InputPanel from './components/InputPanel.vue'
+import LandingPage from './components/LandingPage.vue'
 import MethodTable from './components/MethodTable.vue'
 import ScoreCards from './components/ScoreCards.vue'
-import type { HistoryEntry, RunRequest, RunResponse } from './types/api'
+import type { HistoryEntry, RunRequest, RunResponse, ScorePayload } from './types/api'
+
+const page = ref<'landing' | 'workbench'>('landing')
 
 const loading = ref(false)
 const error = ref<string | null>(null)
@@ -18,29 +21,73 @@ const goals = computed(() => ({
   maxRunTime: lastRequest.value?.max_run_time_min ?? 12,
 }))
 
-const history = computed(() => response.value?.history ?? [])
+function isDisplayable(entry: HistoryEntry | null | undefined): entry is HistoryEntry {
+  const peaks = entry?.simulation?.peaks
+  const score = entry?.score
+  if (!peaks?.length || !score) return false
+  if (typeof score.min_resolution !== 'number' || typeof score.passed !== 'boolean') return false
+  if ('error' in score && (score as ScorePayload & { error?: unknown }).error) return false
+  return peaks.every((peak) => Boolean(peak?.name) && typeof peak.retention_min === 'number')
+}
+
+function penaltySum(score: ScorePayload): number {
+  return Object.values(score.penalties ?? {}).reduce((sum, value) => sum + Number(value), 0)
+}
+
+function betterScore(candidate: ScorePayload, incumbent: ScorePayload | null): boolean {
+  if (!incumbent) return true
+  if (Boolean(candidate.passed) !== Boolean(incumbent.passed)) return Boolean(candidate.passed)
+  const candidatePenalty = penaltySum(candidate)
+  const incumbentPenalty = penaltySum(incumbent)
+  if (candidatePenalty !== incumbentPenalty) return candidatePenalty < incumbentPenalty
+  return candidate.min_resolution > incumbent.min_resolution
+}
+
+function bestIndex(entries: HistoryEntry[]): number {
+  let best = 0
+  entries.forEach((entry, index) => {
+    if (betterScore(entry.score, entries[best]?.score ?? null)) best = index
+  })
+  return best
+}
+
+const history = computed(() => (response.value?.history ?? []).filter(isDisplayable))
 
 const activeEntry = computed<HistoryEntry | null>(() => {
-  const h = history.value
-  if (!h.length) return null
-  const idx = Math.min(selectedIteration.value, h.length - 1)
-  return h[idx] ?? null
+  const entries = history.value
+  if (!entries.length) {
+    const fallback: HistoryEntry = {
+      method: response.value?.method as HistoryEntry['method'],
+      simulation: response.value?.simulation as HistoryEntry['simulation'],
+      score: response.value?.score as HistoryEntry['score'],
+    }
+    return isDisplayable(fallback) ? fallback : null
+  }
+  const idx = Math.min(Math.max(selectedIteration.value, 0), entries.length - 1)
+  return entries[idx] ?? null
 })
 
-const displayMethod = computed(() => activeEntry.value?.method ?? response.value?.method)
-const displaySimulation = computed(() => activeEntry.value?.simulation ?? response.value?.simulation)
-const displayScore = computed(() => activeEntry.value?.score ?? response.value?.score)
+const displayMethod = computed(() => activeEntry.value?.method)
+const displaySimulation = computed(() => activeEntry.value?.simulation)
+const displayScore = computed(() => activeEntry.value?.score)
 
-async function runAgent(request: RunRequest) {
+async function runAgent(request: RunRequest, followUp?: string) {
   loading.value = true
   error.value = null
-  lastRequest.value = request
+  lastRequest.value = {
+    modality: request.modality,
+    analytes: request.analytes,
+    max_run_time_min: request.max_run_time_min,
+    min_resolution: request.min_resolution,
+  }
   selectedIteration.value = 0
   try {
+    const body: RunRequest = { ...lastRequest.value }
+    if (followUp?.trim()) body.follow_up = followUp.trim()
     const res = await fetch('/api/hplc/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request),
+      body: JSON.stringify(body),
     })
     const data = (await res.json()) as RunResponse & { error?: string }
     if (!res.ok) {
@@ -49,10 +96,8 @@ async function runAgent(request: RunRequest) {
       return
     }
     response.value = data
-    if (data.history?.length) {
-      const bestIdx = data.history.findIndex((e) => e.score?.passed)
-      selectedIteration.value = bestIdx >= 0 ? bestIdx : data.history.length - 1
-    }
+    const entries = (data.history ?? []).filter(isDisplayable)
+    selectedIteration.value = entries.length ? bestIndex(entries) : 0
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Network error'
     response.value = null
@@ -61,9 +106,9 @@ async function runAgent(request: RunRequest) {
   }
 }
 
-function onFollowUp(_message: string) {
+function onFollowUp(message: string) {
   if (lastRequest.value) {
-    runAgent(lastRequest.value)
+    runAgent(lastRequest.value, message)
   }
 }
 
@@ -93,12 +138,15 @@ function exportCsv() {
 </script>
 
 <template>
-  <div class="app-shell">
+  <LandingPage v-if="page === 'landing'" @launch="page = 'workbench'" />
+
+  <div v-else class="app-shell">
     <header class="top-bar">
       <div class="brand">
         <span class="brand-mark">Chumba Labs</span>
-        <span class="brand-sub">Method development workstation</span>
+        <span class="brand-sub">method development workbench</span>
       </div>
+      <button type="button" class="back-link" @click="page = 'landing'">← Home</button>
     </header>
 
     <div v-if="error" class="banner error">{{ error }}</div>
@@ -148,3 +196,23 @@ function exportCsv() {
     </main>
   </div>
 </template>
+
+<style scoped>
+.back-link {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: color 0.15s, border-color 0.15s;
+}
+.back-link:hover {
+  color: var(--text-primary);
+  border-color: var(--border-active);
+}
+</style>

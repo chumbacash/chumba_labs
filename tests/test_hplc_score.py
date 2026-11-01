@@ -49,6 +49,17 @@ def _demo_method() -> HplcMethod:
     )
 
 
+def test_three_named_peaks_for_pain_relief_set():
+    analytes = [
+        Analyte(name="Acetaminophen", smiles="CC(=O)Nc1ccc(O)cc1"),
+        Analyte(name="Caffeine", smiles="Cn1cnc2c1c(=O)n(C)c(=O)n2C"),
+        Analyte(name="Aspirin", smiles="CC(=O)Oc1ccccc1C(=O)O"),
+    ]
+    sim = simulate_chromatogram(analytes, _demo_method())
+    names = [peak.name for peak in sim.peaks]
+    assert names == ["Caffeine", "Aspirin", "Acetaminophen"]
+
+
 def test_rp_elution_ethanol_before_toluene():
     analytes = [
         Analyte(name="toluene", smiles="Cc1ccccc1"),

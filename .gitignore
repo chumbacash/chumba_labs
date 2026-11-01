@@ -12,13 +12,13 @@ wheels/
 # Secrets
 .env
 
-# Frontend (chumbalabs — Vue 3 + Vite)
-chumbalabs/node_modules/
-chumbalabs/dist/
-chumbalabs/.vite/
-chumbalabs/.env.local
-chumbalabs/.env.*.local
-chumbalabs/**/*.tsbuildinfo
+# Frontend (Vue 3 + Vite)
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env.local
+frontend/.env.*.local
+frontend/**/*.tsbuildinfo
 
 # Local debug captures (accidental stdout/stderr redirects)
 stderr.txt
