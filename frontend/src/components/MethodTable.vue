@@ -25,15 +25,16 @@ const gradientText = computed(() => {
 
 <template>
   <div class="method-table-wrap">
-    <h3>Proposed method</h3>
+    <div class="section-head">
+      <h3>Proposed method</h3>
+      <p>Column, flow, temperature, and gradient as scored.</p>
+      <span class="truth-badge" title="Values are copied from tool output">Tool output</span>
+    </div>
     <table v-if="rows.length" class="method-table">
       <tbody>
         <tr v-for="row in rows" :key="row.label">
           <th>{{ row.label }}</th>
-          <td>
-            {{ row.value }}
-            <span class="truth-badge" title="From tool output">Source of truth: tool output</span>
-          </td>
+          <td>{{ row.value }}</td>
         </tr>
         <tr>
           <th>Gradient</th>

@@ -8,16 +8,16 @@ const props = defineProps<{
   maxRunTimeTarget: number
 }>()
 
-type CardState = 'good' | 'warn' | 'bad' | 'neutral'
+type KpiState = 'good' | 'warn' | 'bad' | 'neutral'
 
-function rsState(rs: number | undefined): CardState {
+function rsState(rs: number | undefined): KpiState {
   if (rs == null || Number.isNaN(rs)) return 'neutral'
   if (rs >= props.minResolutionTarget) return 'good'
   if (rs >= props.minResolutionTarget * 0.85) return 'warn'
   return 'bad'
 }
 
-function timeState(t: number | undefined): CardState {
+function timeState(t: number | undefined): KpiState {
   if (t == null || Number.isNaN(t)) return 'neutral'
   if (t <= props.maxRunTimeTarget) return 'good'
   if (t <= props.maxRunTimeTarget * 1.1) return 'warn'
@@ -31,42 +31,47 @@ const cards = computed(() => {
   }
   return [
     {
-      title: 'Min Rs',
+      label: 'Min resolution',
       value: s.min_resolution.toFixed(2),
+      unit: '',
       target: `≥ ${props.minResolutionTarget}`,
+      ghost: String(props.minResolutionTarget),
       state: rsState(s.min_resolution),
     },
     {
-      title: 'Run time',
-      value: `${s.total_time_min?.toFixed(1) ?? '—'} min`,
+      label: 'Run time',
+      value: s.total_time_min?.toFixed(1) ?? '—',
+      unit: 'min',
       target: `≤ ${props.maxRunTimeTarget} min`,
+      ghost: String(props.maxRunTimeTarget),
       state: timeState(s.total_time_min),
     },
     {
-      title: 'Goals',
+      label: 'Goals',
       value: s.passed ? 'Pass' : 'Miss',
+      unit: '',
       target: 'resolution & time',
-      state: (s.passed ? 'good' : 'bad') as CardState,
+      ghost: s.passed ? '✓' : '✕',
+      state: (s.passed ? 'good' : 'bad') as KpiState,
     },
   ]
 })
 </script>
 
 <template>
-  <div class="score-cards">
-    <div
-      v-for="card in cards"
-      :key="card.title"
-      class="score-card"
-      :class="card.state"
-    >
-      <span class="card-title">{{ card.title }}</span>
-      <span class="card-value">
-        {{ card.value }}
-        <span class="truth-badge">Source of truth: tool output</span>
-      </span>
-      <span class="card-target">Target: {{ card.target }}</span>
-    </div>
-    <p v-if="!cards.length" class="empty">Scores appear after a run.</p>
+  <div class="score-band">
+    <template v-if="cards.length">
+      <div v-for="card in cards" :key="card.label" class="kpi" :class="card.state">
+        <span class="kpi-ghost" aria-hidden="true">{{ card.ghost }}</span>
+        <span class="kpi-label">{{ card.label }}</span>
+        <span class="kpi-value">
+          {{ card.value }}
+          <span v-if="card.unit" class="kpi-unit">{{ card.unit }}</span>
+        </span>
+        <span class="kpi-target">Target {{ card.target }}</span>
+      </div>
+      <p class="truth-note">Scores are tool output, not narrative.</p>
+    </template>
+    <p v-else class="empty">Scores appear after a run.</p>
   </div>
 </template>

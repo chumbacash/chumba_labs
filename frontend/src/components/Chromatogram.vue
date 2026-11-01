@@ -14,6 +14,7 @@ const plot = computed(() => {
   const empty = {
     traces: [] as { points: string; color: string }[],
     labels: [] as { x: number; y: number; name: string; color: string }[],
+    ticks: [] as { x: number; label: string }[],
     xMax: 12,
     height: 220,
     pad: { l: 48, r: 16, t: 28, b: 36 },
@@ -74,6 +75,18 @@ const plot = computed(() => {
     }
   }
 
+  // Nice-ticks for the time axis (1 / 2 / 5 / 10 minute steps).
+  const rawStep = xMax / 6
+  const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)))
+  const normalized = rawStep / magnitude
+  const niceMultiple = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10
+  const tickStep = niceMultiple * magnitude
+  const tickCount = Math.floor(xMax / tickStep + 1e-9)
+  const ticks = Array.from({ length: tickCount + 1 }, (_, i) => {
+    const t = Math.round(i * tickStep * 10) / 10
+    return { x: xScale(t), label: String(t) }
+  })
+
   return {
     traces: peaks.map((peak, index) => ({
       points: traceFor(peak),
@@ -85,6 +98,7 @@ const plot = computed(() => {
       name: item.name,
       color: item.color,
     })),
+    ticks,
     xMax,
     height,
     pad: { l: padL, r: padR, t: padT, b: padB },
@@ -95,9 +109,9 @@ const plot = computed(() => {
 
 <template>
   <div class="chrom-wrap">
-    <div class="chrom-header">
+    <div class="section-head">
       <h3>Chromatogram</h3>
-      <p class="disclaimer">Predicted retention times (LSS model)</p>
+      <p>Predicted retention times from the LSS model.</p>
     </div>
     <svg
       v-if="simulation?.peaks?.length"
@@ -128,7 +142,19 @@ const plot = computed(() => {
         fill="none"
         :style="{ stroke: trace.color }"
       />
-      <text :x="width / 2" :y="plot.height - 8" class="axis-label" text-anchor="middle">
+      <g v-for="(tick, i) in plot.ticks" :key="`tick-${i}`">
+        <line
+          :x1="tick.x"
+          :y1="plot.height - plot.pad.b"
+          :x2="tick.x"
+          :y2="plot.height - plot.pad.b + 4"
+          class="tick"
+        />
+        <text :x="tick.x" :y="plot.height - plot.pad.b + 14" class="tick-label" text-anchor="middle">
+          {{ tick.label }}
+        </text>
+      </g>
+      <text :x="width / 2" :y="plot.height - 2" class="axis-label" text-anchor="middle">
         Time (min)
       </text>
       <g v-for="(lbl, i) in plot.labels" :key="`label-${i}`">

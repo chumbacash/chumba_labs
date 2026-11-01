@@ -25,6 +25,11 @@ def api_health():
     return health()
 
 
+@app.get("/health")
+def health_alias():
+    return health()
+
+
 @app.post("/api/hplc/run")
 async def api_hplc_run(request: Request):
     try:

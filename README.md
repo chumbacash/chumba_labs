@@ -106,7 +106,7 @@ docker build -t chumba-labs .
 docker run --rm -p 8000:8000 --env-file .env chumba-labs
 ```
 
-`GET /api/health` returns `{"status":"ok"}`. The image installs runtime dependencies only, runs as a non-root user, and excludes `frontend/`, `tests/`, `context/`, and `modal/`.
+`GET /api/health` (or `/health`) returns `{"status":"ok"}`. The image installs runtime dependencies only, runs as a non-root user, and excludes `frontend/`, `tests/`, `context/`, and `modal/`.
 
 GitHub Actions:
 

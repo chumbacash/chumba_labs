@@ -156,6 +156,11 @@ function exportCsv() {
       <InputPanel :loading="loading" @run="runAgent" />
 
       <section class="center-pane panel">
+        <header class="panel-header">
+          <h2>Result</h2>
+          <span class="panel-sub">Best-scoring proposal from this run.</span>
+        </header>
+
         <div v-if="history.length > 1" class="iteration-strip">
           <span class="label">Proposal</span>
           <button
@@ -202,17 +207,17 @@ function exportCsv() {
   margin-left: auto;
   background: transparent;
   border: 1px solid var(--border);
-  color: var(--text-muted);
+  color: var(--muted);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  padding: 0.3rem 0.75rem;
-  border-radius: 6px;
+  font-size: 0.68rem;
+  padding: 4px 10px;
+  border-radius: 5px;
   cursor: pointer;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   transition: color 0.15s, border-color 0.15s;
 }
 .back-link:hover {
-  color: var(--text-primary);
-  border-color: var(--border-active);
+  color: var(--text);
+  border-color: var(--border-strong);
 }
 </style>

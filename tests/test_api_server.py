@@ -11,6 +11,12 @@ def test_health_endpoint():
     assert response.json() == {"status": "ok"}
 
 
+def test_health_alias_endpoint():
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
 def test_invalid_smiles_returns_400():
     response = client.post(
         "/api/hplc/run",

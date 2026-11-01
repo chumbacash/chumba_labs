@@ -47,7 +47,6 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
     <!-- HEADER / NAV BAR -->
     <header class="nav-bar">
       <div class="nav-left">
-        <img src="/favicon.svg" alt="Chumba Labs" class="nav-logo" />
         <span class="nav-brand">CHUMBA LABS</span>
       </div>
       <nav class="nav-right">
@@ -201,11 +200,6 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   display: flex;
   align-items: center;
   gap: 0.625rem;
-}
-
-.nav-logo {
-  width: 22px;
-  height: 22px;
 }
 
 .nav-brand {
