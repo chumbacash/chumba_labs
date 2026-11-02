@@ -30,6 +30,30 @@
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', 'IBM Plex Mono', 'Cascadia Mono', 'Courier New', monospace;
 
+  /* Typography Scale - inspired by OpenCode Stats */
+  --text-hero: 3.2rem;
+  --text-section-title: 1.1rem;
+  --text-section-subtitle: 0.82rem;
+  --text-body: 0.9rem;
+  --text-data: 1.0rem;
+  --text-label: 0.66rem;
+  --text-meta: 0.75rem;
+
+  /* Font weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Consistent spacing scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+
   /* Aliases kept for component-scoped styles. */
   --text-primary: var(--text);
   --text-muted: var(--muted);
@@ -37,7 +61,7 @@
 
   font-family: var(--font-sans);
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: var(--weight-regular);
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -45,6 +69,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color-scheme: dark;
+  font-variant-numeric: tabular-nums;
 }
 
 *,
@@ -84,18 +109,46 @@ textarea {
 }
 
 .top-bar {
+  position: fixed;
+  top: 12px;
+  left: 0;
+  right: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  height: 52px;
-  padding: 0 16px;
-  background: rgba(8, 8, 11, 0.88);
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  position: sticky;
+  justify-content: center;
+  padding: 0 12px;
+  pointer-events: none;
+}
+
+.top-bar::before {
+  content: '';
+  position: absolute;
   top: 0;
-  z-index: 20;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 1256px;
+  height: 52px;
+  background: rgba(11, 11, 16, 0.9);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+}
+
+.top-bar-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 24px);
+  max-width: 1256px;
+  height: 52px;
+  padding: 0 20px;
+  pointer-events: auto;
 }
 
 .brand {
@@ -107,17 +160,18 @@ textarea {
 
 .brand-mark {
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--text);
   white-space: nowrap;
+  text-transform: uppercase;
 }
 
 .brand-sub {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--faint);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -126,13 +180,14 @@ textarea {
 .dashboard {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(250px, 300px) minmax(0, 1fr) minmax(270px, 330px);
-  gap: 12px;
+  grid-template-columns: minmax(240px, 270px) minmax(0, 680px) minmax(260px, 290px);
+  gap: 10px;
   min-height: 0;
-  padding: 12px;
-  max-width: 1800px;
+  padding: 76px 10px 10px;
+  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
+  justify-content: center;
 }
 
 /* ───────── Panel: flat surface, hairline, no elevation ───────── */
@@ -141,38 +196,38 @@ textarea {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 14px;
   overflow-y: auto;
 }
 
 .center-pane {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .panel-header {
   display: flex;
   align-items: baseline;
-  gap: 0.55rem;
+  gap: var(--space-md);
   flex-wrap: wrap;
-  margin-bottom: 14px;
-  padding-bottom: 10px;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--border);
 }
 
 .panel-header h2 {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: var(--text-section-title);
+  font-weight: var(--weight-bold);
   letter-spacing: -0.01em;
   color: var(--text);
 }
 
 .panel-sub {
-  font-size: 0.72rem;
-  font-weight: 400;
+  font-size: var(--text-section-subtitle);
+  font-weight: var(--weight-regular);
   color: var(--faint);
   letter-spacing: 0;
 }
@@ -182,7 +237,7 @@ textarea {
 }
 
 .section {
-  margin-bottom: 18px;
+  margin-bottom: var(--space-lg);
 }
 
 .section:last-of-type {
@@ -192,35 +247,35 @@ textarea {
 .section-head {
   display: flex;
   align-items: baseline;
-  gap: 0.55rem;
+  gap: var(--space-md);
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-md);
 }
 
 .section-head h3 {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: var(--text-section-subtitle);
+  font-weight: var(--weight-bold);
   letter-spacing: -0.01em;
   color: var(--text);
 }
 
 .section-head p {
   margin: 0;
-  font-size: 0.72rem;
+  font-size: var(--text-meta);
   color: var(--faint);
 }
 
 .label {
   display: block;
-  font-family: var(--font-sans);
-  font-size: 0.66rem;
-  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.09em;
   color: var(--faint);
-  margin-bottom: 8px;
+  margin-bottom: var(--space-sm);
 }
 
 .hint {
@@ -1006,4 +1061,60 @@ textarea {
   .brand-sub {
     display: none;
   }
+}
+
+
+/* ───────── Section Anchors & Metadata ───────── */
+.heading-anchor {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.heading-anchor:hover {
+  color: var(--accent);
+}
+
+.heading-anchor::before {
+  content: '#';
+  position: absolute;
+  margin-left: -1.2em;
+  color: var(--faint);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.heading-anchor:hover::before {
+  opacity: 1;
+}
+
+.run-metadata {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.metadata-item svg {
+  opacity: 0.6;
+}
+
+.metadata-separator {
+  opacity: 0.4;
+}
+
+.metadata-warn {
+  color: var(--warn);
+  font-weight: var(--weight-semibold);
 }

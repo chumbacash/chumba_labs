@@ -8,6 +8,7 @@ defineProps<{
   path: string
   sparkError?: string
   loading: boolean
+  sectionId?: string
 }>()
 
 const emit = defineEmits<{
@@ -52,9 +53,9 @@ function stepError(output: unknown): string | null {
 </script>
 
 <template>
-  <aside class="panel timeline-panel">
+  <aside id="timeline" class="panel timeline-panel">
     <header class="panel-header">
-      <h2>Agent timeline</h2>
+      <h2 class="heading-anchor">Agent timeline</h2>
       <span class="panel-sub">Tool calls, in order.</span>
       <span class="path-tag">{{ path }}</span>
     </header>

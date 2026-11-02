@@ -24,9 +24,9 @@ const gradientText = computed(() => {
 </script>
 
 <template>
-  <div class="method-table-wrap">
+  <div id="method" class="method-table-wrap">
     <div class="section-head">
-      <h3>Proposed method</h3>
+      <h3 class="heading-anchor">Proposed method</h3>
       <p>Column, flow, temperature, and gradient as scored.</p>
       <span class="truth-badge" title="Values are copied from tool output">Tool output</span>
     </div>

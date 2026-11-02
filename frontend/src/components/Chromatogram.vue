@@ -108,9 +108,9 @@ const plot = computed(() => {
 </script>
 
 <template>
-  <div class="chrom-wrap">
+  <div id="chromatogram" class="chrom-wrap">
     <div class="section-head">
-      <h3>Chromatogram</h3>
+      <h3 class="heading-anchor">Chromatogram</h3>
       <p>Predicted retention times from the LSS model.</p>
     </div>
     <svg

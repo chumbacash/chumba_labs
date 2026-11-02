@@ -44,74 +44,81 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 
 <template>
   <div class="landing">
-    <!-- HEADER / NAV BAR -->
+    <!-- HEADER / NAV BAR - Floating -->
     <header class="nav-bar">
-      <div class="nav-left">
-        <span class="nav-brand">CHUMBA LABS</span>
+      <div class="nav-container">
+        <div class="nav-left">
+          <span class="nav-brand">CHUMBA LABS</span>
+        </div>
+        <nav class="nav-center">
+          <a href="#features" class="nav-link">How It Works</a>
+          <a href="https://github.com/chumba-labs" target="_blank" class="nav-link">GitHub</a>
+          <a href="#about" class="nav-link">About</a>
+        </nav>
+        <div class="nav-right">
+          <button class="nav-cta" @click="emit('launch')">Launch Workbench</button>
+        </div>
       </div>
-      <nav class="nav-right">
-        <a href="#" class="nav-link">Documentation</a>
-        <a href="#" class="nav-link">GitHub</a>
-        <a href="#" class="nav-link">About</a>
-      </nav>
     </header>
 
     <!-- HERO SECTION -->
     <section class="hero">
-      <div class="hero-content" :class="{ visible: heroVisible }">
-        <p class="overline">AUTONOMOUS METHOD DEVELOPMENT</p>
-        <h1 class="headline">
-          Compress weeks of HPLC method development into minutes.
-        </h1>
-        <p class="subheadline">
-          An agentic copilot that proposes, simulates, and scores chromatography
-          methods — so the analyst approves the next experiment, not the model
-          alone.
-        </p>
-        <button class="cta-button" @click="emit('launch')">
-          Launch Workbench →
-        </button>
-        <p class="cta-note">
-          No account required · Runs locally or via Meta Muse Spark
-        </p>
-      </div>
+      <div class="hero-inner">
+        <div class="hero-content" :class="{ visible: heroVisible }">
+          <p class="overline">AUTONOMOUS METHOD DEVELOPMENT</p>
+          <h1 class="headline">
+            Compress weeks of HPLC method development into minutes.
+          </h1>
+          <p class="subheadline">
+            An agentic copilot that proposes, simulates, and scores chromatography
+            methods — so the analyst approves the next experiment, not the model
+            alone.
+          </p>
+          <button class="cta-button" @click="emit('launch')">
+            Launch Workbench →
+          </button>
+          <p class="cta-note">
+            No account required · Runs locally or via Meta Muse Spark
+          </p>
+        </div>
 
-      <!-- Decorative chromatogram SVG -->
-      <svg
-        class="chromatogram"
-        viewBox="0 0 600 300"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-      >
-        <polyline
-          :points="baselinePoints"
-          fill="none"
-          stroke="#67e8f9"
-          stroke-width="1.5"
-        />
-        <polyline
-          :points="peak1Points"
-          fill="none"
-          stroke="#67e8f9"
-          stroke-width="1.5"
-        />
-        <polyline
-          :points="peak2Points"
-          fill="none"
-          stroke="#fbbf24"
-          stroke-width="1.5"
-        />
-        <polyline
-          :points="peak3Points"
-          fill="none"
-          stroke="#fb7185"
-          stroke-width="1.5"
-        />
-      </svg>
+        <!-- Decorative chromatogram SVG -->
+        <svg
+          class="chromatogram"
+          viewBox="0 0 600 300"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+        >
+          <polyline
+            :points="baselinePoints"
+            fill="none"
+            stroke="#67e8f9"
+            stroke-width="1.5"
+          />
+          <polyline
+            :points="peak1Points"
+            fill="none"
+            stroke="#67e8f9"
+            stroke-width="1.5"
+          />
+          <polyline
+            :points="peak2Points"
+            fill="none"
+            stroke="#fbbf24"
+            stroke-width="1.5"
+          />
+          <polyline
+            :points="peak3Points"
+            fill="none"
+            stroke="#fb7185"
+            stroke-width="1.5"
+          />
+        </svg>
+      </div>
     </section>
 
     <!-- FEATURES SECTION -->
-    <section class="features">
+    <section id="features" class="features">
       <p class="section-title">HOW IT WORKS</p>
       <div class="features-grid">
         <div class="feature-card">
@@ -178,28 +185,55 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   overflow-x: hidden;
 }
 
-/* ───────── NAV BAR ───────── */
+/* ───────── NAV BAR - Floating Header ───────── */
 .nav-bar {
   position: fixed;
-  top: 0;
+  top: 2rem;
   left: 0;
   right: 0;
   z-index: 100;
-  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+  pointer-events: none;
+}
+
+.nav-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 94%;
+  max-width: 1200px;
+  height: 100%;
+  background: rgba(8, 8, 11, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+}
+
+.nav-container {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
-  background: transparent;
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  width: 94%;
+  max-width: 1200px;
+  height: 52px;
+  padding: 0 1.5rem;
+  pointer-events: auto;
 }
 
 .nav-left {
   display: flex;
   align-items: center;
   gap: 0.625rem;
+  z-index: 2;
 }
 
 .nav-brand {
@@ -208,45 +242,98 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--text-primary);
+  cursor: pointer;
+  transition: color 0.2s ease;
 }
 
-.nav-right {
+.nav-brand:hover {
+  color: var(--accent);
+}
+
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 1.75rem;
+  gap: 2rem;
+  z-index: 1;
 }
 
 .nav-link {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   text-decoration: none;
   letter-spacing: 0.02em;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
   color: var(--text-primary);
 }
 
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 2;
+}
+
+.nav-cta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #06060a;
+  background: var(--text-primary);
+  border: none;
+  border-radius: 100px;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-cta:hover {
+  background: #c8c8d0;
+  transform: translateY(-1px);
+}
+
+.nav-cta:active {
+  background: #b0b0ba;
+  transform: translateY(0);
+}
+
 /* ───────── HERO ───────── */
 .hero {
   position: relative;
-  height: calc(100vh - 56px);
-  margin-top: 56px;
+  min-height: 100vh;
   display: flex;
   align-items: center;
+  justify-content: center;
   overflow: hidden;
+  padding-top: 100px;
+}
+
+.hero-inner {
+  position: relative;
+  width: 94%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 640px;
-  padding-left: 4rem;
+  max-width: 560px;
+  padding-left: 0;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transform: translateY(30px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-content.visible {
@@ -256,30 +343,40 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 
 .overline {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 500;
+  font-size: var(--text-label);
+  font-weight: var(--weight-medium);
   letter-spacing: 0.12em;
   color: var(--text-muted);
-  margin: 0 0 1.25rem 0;
+  margin: 0 0 var(--space-lg) 0;
   text-transform: uppercase;
 }
 
 .headline {
   font-family: var(--font-sans);
-  font-size: 3.2rem;
-  font-weight: 600;
+  font-size: var(--text-hero);
+  font-weight: var(--weight-bold);
   line-height: 1.1;
   letter-spacing: -0.03em;
   color: var(--text-primary);
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 var(--space-xl) 0;
+}
+
+.headline::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--accent);
+  margin-top: var(--space-xl);
+  border-radius: 2px;
 }
 
 .subheadline {
-  font-size: 1.1rem;
-  line-height: 1.6;
+  font-size: var(--text-section-title);
+  line-height: 1.7;
   color: var(--text-muted);
-  margin: 0 0 2rem 0;
-  max-width: 540px;
+  margin: 0 0 var(--space-2xl) 0;
+  max-width: 520px;
 }
 
 .cta-button {
@@ -291,18 +388,23 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   background: var(--text-primary);
   border: none;
   border-radius: 100px;
-  padding: 0.75rem 2rem;
+  padding: 0.85rem 2.25rem;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   letter-spacing: -0.01em;
+  box-shadow: 0 8px 24px rgba(232, 232, 237, 0.2);
 }
 
 .cta-button:hover {
   background: #c8c8d0;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(232, 232, 237, 0.3);
 }
 
 .cta-button:active {
   background: #b0b0ba;
+  transform: translateY(0);
+  box-shadow: 0 4px 16px rgba(232, 232, 237, 0.2);
 }
 
 .cta-note {
@@ -329,49 +431,54 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 /* ───────── FEATURES ───────── */
 .features {
   background: var(--bg-alt);
-  padding: 5rem 4rem;
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  scroll-margin-top: 100px;
 }
 
 .section-title {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 500;
+  font-size: var(--text-label);
+  font-weight: var(--weight-medium);
   letter-spacing: 0.12em;
   color: var(--text-muted);
   text-transform: uppercase;
-  margin: 0 0 2.5rem 0;
+  margin: 0 0 var(--space-2xl) 0;
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  gap: var(--space-lg);
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .feature-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: var(--radius);
+  padding: var(--space-xl);
 }
 
 .feature-icon {
   width: 40px;
   height: 40px;
   color: var(--text-muted);
-  margin-bottom: 1.25rem;
+  margin-bottom: var(--space-lg);
 }
 
 .feature-title {
   font-family: var(--font-sans);
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--text-section-title);
+  font-weight: var(--weight-bold);
   color: var(--text-primary);
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 var(--space-md) 0;
 }
 
 .feature-desc {
-  font-size: 0.9rem;
+  font-size: var(--text-body);
   line-height: 1.6;
   color: var(--text-muted);
   margin: 0;
@@ -393,14 +500,49 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 }
 
 /* ───────── Responsive ───────── */
+@media (max-width: 968px) {
+  .nav-center {
+    display: none;
+  }
+  
+  .nav-container {
+    width: 90%;
+  }
+}
+
 @media (max-width: 768px) {
+  .nav-bar::before {
+    width: 90%;
+  }
+  
+  .nav-container {
+    padding: 0 1rem;
+  }
+  
+  .nav-cta {
+    font-size: 0.68rem;
+    padding: 0.45rem 1rem;
+  }
+
+  .hero {
+    padding-top: 120px;
+  }
+
+  .hero-inner {
+    width: 90%;
+  }
+
   .hero-content {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .headline {
     font-size: 2.2rem;
+  }
+
+  .subheadline {
+    font-size: 0.95rem;
   }
 
   .features {
@@ -414,18 +556,6 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   .chromatogram {
     width: 90%;
     opacity: 0.08;
-  }
-
-  .nav-bar {
-    padding: 0 1rem;
-  }
-
-  .nav-right {
-    gap: 1rem;
-  }
-
-  .nav-link {
-    font-size: 0.7rem;
   }
 }
 </style>

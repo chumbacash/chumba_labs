@@ -59,7 +59,7 @@ const cards = computed(() => {
 </script>
 
 <template>
-  <div class="score-band">
+  <div id="score" class="score-band">
     <template v-if="cards.length">
       <div v-for="card in cards" :key="card.label" class="kpi" :class="card.state">
         <span class="kpi-ghost" aria-hidden="true">{{ card.ghost }}</span>

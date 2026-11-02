@@ -142,11 +142,13 @@ function exportCsv() {
 
   <div v-else class="app-shell">
     <header class="top-bar">
-      <div class="brand">
-        <span class="brand-mark">Chumba Labs</span>
-        <span class="brand-sub">method development workbench</span>
+      <div class="top-bar-container">
+        <div class="brand">
+          <span class="brand-mark">Chumba Labs</span>
+          <span class="brand-sub">method development workbench</span>
+        </div>
+        <button type="button" class="back-link" @click="page = 'landing'">← Home</button>
       </div>
-      <button type="button" class="back-link" @click="page = 'landing'">← Home</button>
     </header>
 
     <div v-if="error" class="banner error">{{ error }}</div>
@@ -157,8 +159,21 @@ function exportCsv() {
 
       <section class="center-pane panel">
         <header class="panel-header">
-          <h2>Result</h2>
+          <h2>
+            <a id="results" class="heading-anchor" href="#results">Results</a>
+          </h2>
           <span class="panel-sub">Best-scoring proposal from this run.</span>
+          <div v-if="response" class="run-metadata">
+            <span class="metadata-item">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M13 13H3V3H13V13ZM6.46777 6.81641V7.81641H7.5791V11.3721H8.5791V6.81641H6.46777ZM7.30078 4.62891V5.62891H8.85645V4.62891H7.30078Z" fill="currentColor"></path>
+              </svg>
+              {{ response.iterations }} iteration{{ response.iterations !== 1 ? 's' : '' }}
+            </span>
+            <span class="metadata-separator">·</span>
+            <span class="metadata-item">{{ response.path }}</span>
+            <span v-if="response.spark_error" class="metadata-item metadata-warn">spark fallback</span>
+          </div>
         </header>
 
         <div v-if="history.length > 1" class="iteration-strip">
@@ -197,6 +212,7 @@ function exportCsv() {
         :spark-error="response?.spark_error"
         :loading="loading"
         @follow-up="onFollowUp"
+        section-id="timeline"
       />
     </main>
   </div>
@@ -204,20 +220,23 @@ function exportCsv() {
 
 <style scoped>
 .back-link {
-  margin-left: auto;
   background: transparent;
   border: 1px solid var(--border);
   color: var(--muted);
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  padding: 4px 10px;
-  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 100px;
   cursor: pointer;
   letter-spacing: 0.02em;
-  transition: color 0.15s, border-color 0.15s;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
+
 .back-link:hover {
   color: var(--text);
   border-color: var(--border-strong);
+  background: rgba(255, 255, 255, 0.03);
 }
 </style>
