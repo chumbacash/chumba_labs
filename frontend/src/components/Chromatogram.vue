@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const width = 640
-const colors = ['#67e8f9', '#fbbf24', '#fb7185', '#a3e635', '#c4b5fd', '#fdba74']
+const colors = ['#0e7490', '#b45309', '#be123c', '#4d7c0f', '#6d28d9', '#c2410c']
 
 const plot = computed(() => {
   const peaks = props.simulation?.peaks ?? []
@@ -150,7 +150,7 @@ const plot = computed(() => {
           :y2="plot.height - plot.pad.b + 4"
           class="tick"
         />
-        <text :x="tick.x" :y="plot.height - plot.pad.b + 14" class="tick-label" text-anchor="middle">
+        <text :x="tick.x" :y="plot.height - plot.pad.b + 14" class="tick-label" :text-anchor="i === plot.ticks.length - 1 ? 'end' : 'middle'">
           {{ tick.label }}
         </text>
       </g>

@@ -143,11 +143,26 @@ function exportCsv() {
   <div v-else class="app-shell">
     <header class="top-bar">
       <div class="top-bar-container">
-        <div class="brand">
+        <button type="button" class="brand" @click="page = 'landing'" aria-label="Back to home">
           <span class="brand-mark">Chumba Labs</span>
-          <span class="brand-sub">method development workbench</span>
+          <span class="brand-divider" aria-hidden="true">/</span>
+          <span class="brand-sub">Workbench</span>
+        </button>
+        <nav class="top-nav" aria-label="Sections">
+          <a href="#input" class="top-link">Input</a>
+          <a href="#result" class="top-link">Result</a>
+          <a href="#timeline" class="top-link">Timeline</a>
+        </nav>
+        <div class="top-actions">
+          <a
+            class="top-link"
+            href="https://github.com/chumba-labs"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          >
+          <button type="button" class="home-btn" @click="page = 'landing'">Home</button>
         </div>
-        <button type="button" class="back-link" @click="page = 'landing'">← Home</button>
       </div>
     </header>
 
@@ -157,7 +172,7 @@ function exportCsv() {
     <main class="dashboard">
       <InputPanel :loading="loading" @run="runAgent" />
 
-      <section class="center-pane panel">
+      <section id="result" class="center-pane panel">
         <header class="panel-header">
           <h2>
             <a id="results" class="heading-anchor" href="#results">Results</a>
@@ -208,7 +223,7 @@ function exportCsv() {
       <AgentTimeline
         :steps="response?.steps ?? []"
         :explanation="response?.explanation ?? ''"
-        :path="response?.path ?? '—'"
+        :path="response?.path ?? 'idle'"
         :spark-error="response?.spark_error"
         :loading="loading"
         @follow-up="onFollowUp"
@@ -219,24 +234,29 @@ function exportCsv() {
 </template>
 
 <style scoped>
-.back-link {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 500;
-  padding: 6px 14px;
-  border-radius: 100px;
+.home-btn {
+  background: var(--text);
+  border: 1px solid var(--text);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 7px 16px;
+  border-radius: 999px;
   cursor: pointer;
-  letter-spacing: 0.02em;
-  transition: all 0.2s ease;
   white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
 }
 
-.back-link:hover {
-  color: var(--text);
-  border-color: var(--border-strong);
-  background: rgba(255, 255, 255, 0.03);
+.home-btn:hover {
+  background: #2b2b31;
+  border-color: #2b2b31;
+}
+
+@media (max-width: 760px) {
+  .top-nav {
+    display: none;
+  }
 }
 </style>

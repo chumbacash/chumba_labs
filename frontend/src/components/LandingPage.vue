@@ -50,10 +50,16 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
         <div class="nav-left">
           <span class="nav-brand">CHUMBA LABS</span>
         </div>
-        <nav class="nav-center">
-          <a href="#features" class="nav-link">How It Works</a>
-          <a href="https://github.com/chumba-labs" target="_blank" class="nav-link">GitHub</a>
-          <a href="#about" class="nav-link">About</a>
+        <nav class="nav-center" aria-label="Sections">
+          <a href="#features" class="nav-link">How it works</a>
+          <a href="#why" class="nav-link">Why it matters</a>
+          <a
+            href="https://github.com/chumba-labs"
+            target="_blank"
+            rel="noopener"
+            class="nav-link"
+            >GitHub</a
+          >
         </nav>
         <div class="nav-right">
           <button class="nav-cta" @click="emit('launch')">Launch Workbench</button>
@@ -71,11 +77,11 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
           </h1>
           <p class="subheadline">
             An agentic copilot that proposes, simulates, and scores chromatography
-            methods — so the analyst approves the next experiment, not the model
-            alone.
+            methods. The analyst approves the next experiment. The model does
+            the guessing.
           </p>
           <button class="cta-button" @click="emit('launch')">
-            Launch Workbench →
+            Launch workbench
           </button>
           <p class="cta-note">
             No account required · Runs locally or via Meta Muse Spark
@@ -92,25 +98,25 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
           <polyline
             :points="baselinePoints"
             fill="none"
-            stroke="#67e8f9"
+            stroke="#0e7490"
             stroke-width="1.5"
           />
           <polyline
             :points="peak1Points"
             fill="none"
-            stroke="#67e8f9"
+            stroke="#0e7490"
             stroke-width="1.5"
           />
           <polyline
             :points="peak2Points"
             fill="none"
-            stroke="#fbbf24"
+            stroke="#b45309"
             stroke-width="1.5"
           />
           <polyline
             :points="peak3Points"
             fill="none"
-            stroke="#fb7185"
+            stroke="#be123c"
             stroke-width="1.5"
           />
         </svg>
@@ -119,7 +125,8 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 
     <!-- FEATURES SECTION -->
     <section id="features" class="features">
-      <p class="section-title">HOW IT WORKS</p>
+      <div class="features-inner">
+      <p class="section-title">How it works</p>
       <div class="features-grid">
         <div class="feature-card">
           <svg class="feature-icon" viewBox="0 0 40 40">
@@ -128,8 +135,8 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
           </svg>
           <h3 class="feature-title">Propose</h3>
           <p class="feature-desc">
-            Agent generates HPLC method parameters — column, gradient, flow,
-            temperature — within instrument constraints.
+            Agent generates HPLC method parameters (column, gradient, flow,
+            temperature) within instrument constraints.
           </p>
         </div>
         <div class="feature-card">
@@ -155,6 +162,44 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
           </p>
         </div>
       </div>
+      </div>
+    </section>
+
+    <!-- WHY IT MATTERS SECTION -->
+    <section id="why" class="why">
+      <div class="why-inner">
+        <p class="section-title">Why it matters</p>
+        <p class="why-lede">
+          Every new impurity ends the same way: an analyst in front of an
+          HPLC, guessing at gradients.
+        </p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <h3 class="feature-title">The bottleneck</h3>
+            <p class="feature-desc">
+              A robust separation can take weeks of trial runs. The know-how
+              lives in experts' heads, so labs without one wait, outsource,
+              or settle for fragile methods.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3 class="feature-title">The shift</h3>
+            <p class="feature-desc">
+              The agent proposes inside real constraints, simulates in
+              seconds, and scores against your targets. Every tool call is
+              shown. The chemist approves the next run.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3 class="feature-title">The bigger picture</h3>
+            <p class="feature-desc">
+              Pharma QC, food safety, environmental, forensics. Every
+              analytical lab hits the same wall. One verifiable loop serves
+              them all.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- FOOTER -->
@@ -167,16 +212,16 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 <style scoped>
 /* ───────── CSS Variables ───────── */
 .landing {
-  --bg: #06060a;
-  --bg-alt: #080810;
-  --text-primary: #e8e8ed;
-  --text-muted: #6b6b76;
-  --accent: #67e8f9;
-  --surface: rgba(255, 255, 255, 0.03);
-  --border: rgba(255, 255, 255, 0.06);
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui,
-    sans-serif;
-  --font-mono: 'SF Mono', 'IBM Plex Mono', ui-monospace, monospace;
+  --bg: #fafafa;
+  --bg-alt: #ffffff;
+  --text-primary: #131316;
+  --text-muted: #5b5b64;
+  --accent: #0e7490;
+  --surface: #f4f4f5;
+  --border: #e7e7ea;
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
 
   background: var(--bg);
   color: var(--text-primary);
@@ -185,55 +230,31 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   overflow-x: hidden;
 }
 
-/* ───────── NAV BAR - Floating Header ───────── */
+/* ───────── NAV BAR, same language as the workbench header ───────── */
 .nav-bar {
-  position: fixed;
-  top: 2rem;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 2rem;
-  pointer-events: none;
-}
-
-.nav-bar::before {
-  content: '';
-  position: absolute;
+  position: sticky;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 94%;
-  max-width: 1200px;
-  height: 100%;
-  background: rgba(8, 8, 11, 0.7);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  pointer-events: auto;
+  z-index: 100;
+  background: rgba(250, 250, 250, 0.92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .nav-container {
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 94%;
-  max-width: 1200px;
-  height: 52px;
-  padding: 0 1.5rem;
-  pointer-events: auto;
+  gap: 1rem;
+  max-width: 1280px;
+  height: 56px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .nav-left {
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  z-index: 2;
 }
 
 .nav-brand {
@@ -242,85 +263,74 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--text-primary);
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.nav-brand:hover {
-  color: var(--accent);
 }
 
 .nav-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 2rem;
-  z-index: 1;
+  gap: 0.25rem;
+  margin: 0 auto;
 }
 
 .nav-link {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   text-decoration: none;
-  letter-spacing: 0.02em;
-  transition: color 0.2s ease;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  border-radius: 999px;
+  transition: color 0.15s ease, background 0.15s ease;
   white-space: nowrap;
 }
 
 .nav-link:hover {
   color: var(--text-primary);
+  background: var(--surface);
 }
 
 .nav-right {
   display: flex;
   align-items: center;
   gap: 1rem;
-  z-index: 2;
+  margin-left: auto;
 }
 
 .nav-cta {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #06060a;
+  letter-spacing: 0.01em;
+  color: #fff;
   background: var(--text-primary);
-  border: none;
-  border-radius: 100px;
+  border: 1px solid var(--text-primary);
+  border-radius: 999px;
   padding: 0.5rem 1.25rem;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background 0.15s ease;
   white-space: nowrap;
 }
 
 .nav-cta:hover {
-  background: #c8c8d0;
-  transform: translateY(-1px);
-}
-
-.nav-cta:active {
-  background: #b0b0ba;
-  transform: translateY(0);
+  background: #2b2b31;
+  border-color: #2b2b31;
 }
 
 /* ───────── HERO ───────── */
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: calc(100vh - 56px);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding-top: 100px;
 }
 
 .hero-inner {
   position: relative;
-  width: 94%;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1280px;
+  padding: 0 1rem;
   display: flex;
   align-items: center;
 }
@@ -382,29 +392,21 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 .cta-button {
   display: inline-block;
   font-family: var(--font-sans);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #06060a;
+  color: #fff;
   background: var(--text-primary);
-  border: none;
-  border-radius: 100px;
-  padding: 0.85rem 2.25rem;
+  border: 1px solid var(--text-primary);
+  border-radius: 999px;
+  padding: 0.8rem 2rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.15s ease;
   letter-spacing: -0.01em;
-  box-shadow: 0 8px 24px rgba(232, 232, 237, 0.2);
 }
 
 .cta-button:hover {
-  background: #c8c8d0;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(232, 232, 237, 0.3);
-}
-
-.cta-button:active {
-  background: #b0b0ba;
-  transform: translateY(0);
-  box-shadow: 0 4px 16px rgba(232, 232, 237, 0.2);
+  background: #2b2b31;
+  border-color: #2b2b31;
 }
 
 .cta-note {
@@ -423,7 +425,7 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   transform: translateY(-50%);
   width: 55%;
   height: 60%;
-  opacity: 0.15;
+  opacity: 0.35;
   pointer-events: none;
   z-index: 1;
 }
@@ -431,10 +433,14 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 /* ───────── FEATURES ───────── */
 .features {
   background: var(--bg-alt);
-  padding: 4rem 2rem;
-  max-width: 1100px;
+  border-top: 1px solid var(--border);
+  padding: 4rem 1rem;
+  scroll-margin-top: 56px;
+}
+
+.features-inner {
+  max-width: 1280px;
   margin: 0 auto;
-  scroll-margin-top: 100px;
 }
 
 .section-title {
@@ -451,12 +457,10 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-lg);
-  max-width: 1000px;
-  margin: 0 auto;
 }
 
 .feature-card {
-  background: var(--surface);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: var(--space-xl);
@@ -484,10 +488,38 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   margin: 0;
 }
 
+/* ───────── WHY IT MATTERS ───────── */
+.why {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 4rem 1rem;
+  scroll-margin-top: 56px;
+}
+
+.why-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.why-lede {
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  max-width: 640px;
+  margin: 0 0 2rem 0;
+}
+
+.why .features-grid {
+  margin-bottom: 0;
+}
+
 /* ───────── FOOTER ───────── */
 .footer {
-  background: var(--bg);
-  padding: 3rem 2rem;
+  background: var(--bg-alt);
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 1rem;
   text-align: center;
 }
 
@@ -504,32 +536,16 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   .nav-center {
     display: none;
   }
-  
-  .nav-container {
-    width: 90%;
-  }
 }
 
 @media (max-width: 768px) {
-  .nav-bar::before {
-    width: 90%;
-  }
-  
-  .nav-container {
-    padding: 0 1rem;
-  }
-  
   .nav-cta {
     font-size: 0.68rem;
     padding: 0.45rem 1rem;
   }
 
-  .hero {
-    padding-top: 120px;
-  }
-
   .hero-inner {
-    width: 90%;
+    width: 100%;
   }
 
   .hero-content {
@@ -551,6 +567,10 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 
   .features-grid {
     grid-template-columns: 1fr;
+  }
+
+  .why-lede {
+    font-size: 1.1rem;
   }
 
   .chromatogram {

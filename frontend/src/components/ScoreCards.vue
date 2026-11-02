@@ -40,7 +40,7 @@ const cards = computed(() => {
     },
     {
       label: 'Run time',
-      value: s.total_time_min?.toFixed(1) ?? '—',
+      value: s.total_time_min?.toFixed(1) ?? 'n/a',
       unit: 'min',
       target: `≤ ${props.maxRunTimeTarget} min`,
       ghost: String(props.maxRunTimeTarget),

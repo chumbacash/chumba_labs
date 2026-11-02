@@ -24,10 +24,88 @@ function toggle(i: number) {
 
 function prettyJson(value: unknown): string {
   try {
-    return JSON.stringify(value, null, 2)
+    return JSON.stringify(roundFloats(value), null, 2)
   } catch {
     return String(value)
   }
+}
+
+/**
+ * Round every float in tool output to 4 decimals so JSON dumps stay
+ * scannable. Integers, strings, and short floats pass through untouched.
+ */
+function roundFloats(value: unknown): unknown {
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value) || Number.isInteger(value)) return value
+    return Number(value.toFixed(4))
+  }
+  if (Array.isArray(value)) return value.map(roundFloats)
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, roundFloats(entry)]),
+    )
+  }
+  return value
+}
+
+/**
+ * The model returns plain text with **Section** markers, " - " separators,
+ * and full-precision floats. Parse the markers into real subheaded
+ * paragraphs so Method / Simulation / Score read as separate blocks.
+ */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
+
+function roundLongFloats(text: string): string {
+  return text.replace(/(\d+)\.(\d{3})\d+/g, '$1.$2')
+}
+
+function formatItems(body: string): string {
+  const items = body
+    .replace(/^[:*\-\s]+/, '')
+    .split(/\s+(?:-|\*)\s+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+  return items
+    .map((item) => {
+      const match = item.match(/^([^:]+):\s*(.*)$/)
+      const labeled = match
+        ? `<strong>${match[1].trim()}:</strong> ${match[2].trim()}`
+        : item
+      return `<span class="muse-sep">•</span> ${labeled}`
+    })
+    .join('<br>')
+}
+
+function formatTitle(header: string): string {
+  return header
+    .trim()
+    .replace(/\s*\(from .+\)$/, '')
+    .replace(/:$/, '')
+}
+
+function formatExplanation(text: string): string {
+  const cleaned = roundLongFloats(escapeHtml(text))
+  const parts = cleaned.split(/\*\*(.+?)\*\*/g)
+  if (parts.length === 1) {
+    return `<p class="muse-intro">${formatItems(cleaned)}</p>`
+  }
+  let html = ''
+  const intro = parts[0].trim().replace(/:?-?\s*$/, '')
+  if (intro) html += `<p class="muse-intro">${intro}</p>`
+  for (let i = 1; i < parts.length; i += 2) {
+    const title = formatTitle(parts[i] ?? '')
+    const body = formatItems(parts[i + 1] ?? '')
+    if (!title && !body) continue
+    html += `<div class="muse-section"><h4 class="muse-section-title">${title}</h4>`
+    if (body) html += `<p class="muse-items">${body}</p>`
+    html += `</div>`
+  }
+  return html || `<p class="muse-intro">${cleaned}</p>`
 }
 
 function sendFollowUp() {
@@ -79,8 +157,8 @@ function stepError(output: unknown): string | null {
 
     <section v-if="explanation" class="muse-block">
       <h3>Agent decision (Muse Spark)</h3>
-      <p class="muse-text">{{ explanation }}</p>
-      <p class="hint">Numbers in the narrative should match tool cards above.</p>
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div class="muse-text" v-html="formatExplanation(explanation)"></div>
     </section>
 
     <section class="follow-up">

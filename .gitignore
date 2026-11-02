@@ -25,3 +25,7 @@ stderr.txt
 stdout*.txt
 *_stderr.txt
 *_stdout.txt
+
+# Local agent skills (installed per machine via `skills add`)
+.agents/
+skills-lock.json

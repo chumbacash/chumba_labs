@@ -47,7 +47,7 @@ function submit() {
 </script>
 
 <template>
-  <aside class="panel input-panel">
+  <aside id="input" class="panel input-panel">
     <header class="panel-header">
       <h2>Experiment input</h2>
       <span class="panel-sub">Modality, analytes, and targets.</span>

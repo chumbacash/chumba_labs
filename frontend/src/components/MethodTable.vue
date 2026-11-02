@@ -18,7 +18,7 @@ const rows = computed(() => {
 
 const gradientText = computed(() => {
   const g = props.method?.gradient ?? []
-  if (!g.length) return '—'
+  if (!g.length) return 'None'
   return g.map((s) => `${s.time_min} min → ${s.percent_b}% B`).join('; ')
 })
 </script>
