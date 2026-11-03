@@ -54,7 +54,7 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
           <a href="#features" class="nav-link">How it works</a>
           <a href="#why" class="nav-link">Why it matters</a>
           <a
-            href="https://github.com/chumba-labs"
+            href="https://github.com/chumbacash/chumba_labs"
             target="_blank"
             rel="noopener"
             class="nav-link"

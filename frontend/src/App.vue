@@ -156,7 +156,7 @@ function exportCsv() {
         <div class="top-actions">
           <a
             class="top-link"
-            href="https://github.com/chumba-labs"
+            href="https://github.com/chumbacash/chumba_labs"
             target="_blank"
             rel="noopener"
             >GitHub</a
