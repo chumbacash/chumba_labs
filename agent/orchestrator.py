@@ -541,7 +541,7 @@ def run_hplc_iteration(
             result["spark_error"] = type(exc).__name__
             return result
     if user_instruction:
-        raise RuntimeError("Follow-up instructions require the Meta Model API key")
+        raise RuntimeError("Follow-up instructions require a model API key")
     print("hplc path: local", file=sys.stderr)
     result = run_local(goals)
     result["path"] = "local"

@@ -1,6 +1,6 @@
 # Chumba Labs workstation
 
-Browser UI for the Chumba Labs HPLC method-development agent: enter analytes and targets, run the agent against the local API, inspect each proposal (method, scores, chromatogram), and read the Spark tool timeline.
+Browser UI for Chumba Labs: company landing page plus HPLC method-development workbench. Enter analytes and targets, run the agent against the local API, inspect each proposal (method, scores, chromatogram), and read the tool timeline.
 
 ## Prerequisites
 
@@ -37,14 +37,14 @@ Other scripts: `npm run build` (production bundle to `dist/`), `npm run preview`
 
 | Component | Role |
 | --- | --- |
+| `LandingPage.vue` | Company site: hero, product, how it works, company, footer |
 | `InputPanel.vue` | Analytes, modality, resolution/time goals, **Run agent** |
 | `MethodTable.vue` | Column, flow, temperature, gradient table |
 | `ScoreCards.vue` | Min resolution, run time, pass/fail vs targets |
 | `Chromatogram.vue` | Simulated peak plot from tool output |
-| `AgentTimeline.vue` | Spark path, tool steps, explanation |
-| `HelloWorld.vue` | Unused Vite scaffold (safe to delete) |
+| `AgentTimeline.vue` | Agent path, tool steps, explanation |
 
-`App.vue` wires the panes and calls the API.
+`App.vue` switches landing ↔ workbench and calls the API.
 
 ## API contract
 
@@ -54,9 +54,9 @@ The UI uses relative URLs so the dev proxy works.
   - `modality`: `"hplc"` or `"gc_ms"`
   - `analytes`: `{ name, smiles }[]`
   - `min_resolution`, `max_run_time_min`
-  - optional `follow_up`: a note to Spark for a follow-up run; it requires a Meta Model API key
+  - optional `follow_up`: a note for a follow-up agent run; requires a model API key
 - **Response** (`RunResponse`): final method, simulation, score, optional `history` of proposals, `steps` from tool calls, `path` (`spark` / `local` / `spark-fallback`), and optional `explanation`.
 
-Spark retries scored methods when the goals are missed or resolution is below 2.0, up to five scored methods. The simulator models only the listed C18 columns; it does not support conclusions about other stationary phases.
+The agent retries scored methods when the goals are missed or resolution is below 2.0, up to five scored methods. The simulator models only the listed C18 columns; it does not support conclusions about other stationary phases.
 
 Types in `src/types/api.ts` should stay aligned with the FastAPI handlers in `api/`.

@@ -6,6 +6,7 @@ const emit = defineEmits<{
 }>()
 
 const heroVisible = ref(false)
+const year = new Date().getFullYear()
 
 onMounted(() => {
   requestAnimationFrame(() => {
@@ -44,15 +45,16 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
 
 <template>
   <div class="landing">
-    <!-- HEADER / NAV BAR - Floating -->
     <header class="nav-bar">
       <div class="nav-container">
         <div class="nav-left">
           <span class="nav-brand">CHUMBA LABS</span>
         </div>
         <nav class="nav-center" aria-label="Sections">
+          <a href="#product" class="nav-link">Products</a>
           <a href="#features" class="nav-link">How it works</a>
           <a href="#why" class="nav-link">Why it matters</a>
+          <a href="#company" class="nav-link">Company</a>
           <a
             href="https://github.com/chumbacash/chumba_labs"
             target="_blank"
@@ -67,11 +69,10 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
       </div>
     </header>
 
-    <!-- HERO SECTION -->
     <section class="hero">
       <div class="hero-inner">
         <div class="hero-content" :class="{ visible: heroVisible }">
-          <p class="overline">AUTONOMOUS METHOD DEVELOPMENT</p>
+          <p class="overline">Autonomous method development</p>
           <h1 class="headline">
             Compress weeks of HPLC method development into minutes.
           </h1>
@@ -84,16 +85,16 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
             Launch workbench
           </button>
           <p class="cta-note">
-            No account required · Runs locally or via Meta Muse Spark
+            No account required · Runs locally with optional cloud agent path
           </p>
         </div>
 
-        <!-- Decorative chromatogram SVG -->
         <svg
           class="chromatogram"
           viewBox="0 0 600 300"
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="none"
+          aria-hidden="true"
         >
           <polyline
             :points="baselinePoints"
@@ -123,49 +124,119 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
       </div>
     </section>
 
-    <!-- FEATURES SECTION -->
-    <section id="features" class="features">
-      <div class="features-inner">
-      <p class="section-title">How it works</p>
-      <div class="features-grid">
-        <div class="feature-card">
-          <svg class="feature-icon" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" stroke-width="1" />
-            <text x="20" y="25" text-anchor="middle" fill="currentColor" font-size="16" font-family="'SF Mono', 'IBM Plex Mono', ui-monospace, monospace">1</text>
-          </svg>
-          <h3 class="feature-title">Propose</h3>
-          <p class="feature-desc">
-            Agent generates HPLC method parameters (column, gradient, flow,
-            temperature) within instrument constraints.
-          </p>
+    <section id="product" class="product">
+      <div class="product-inner">
+        <p class="section-title">Products</p>
+
+        <div id="product-method" class="product-block">
+          <div class="product-layout">
+            <div class="product-copy">
+              <p class="product-name">Method Development</p>
+              <h2 class="product-heading">
+                One agent shell for HPLC and GC-MS method development.
+              </h2>
+              <p class="product-body">
+                Chumba Labs keeps method state structured, calls deterministic
+                simulation and scoring tools, and returns auditable proposals your
+                chemists can trust enough to take to the bench.
+              </p>
+              <ul class="product-points">
+                <li>HPLC gradient methods with resolution and run-time targets</li>
+                <li>SMILES-based analyte input and tool-grounded metrics</li>
+                <li>Full agent timeline for every propose → simulate → score cycle</li>
+                <li>CSV export for the next confirmatory instrument run</li>
+              </ul>
+              <button class="cta-button" @click="emit('launch')">Open the workbench</button>
+            </div>
+            <aside class="product-aside" aria-label="Method development scope">
+              <p class="aside-label">In scope</p>
+              <p class="aside-text">HPLC method search · GC-MS thin plugin · analyst approval</p>
+              <p class="aside-label">Out of scope</p>
+              <p class="aside-text">Instrument control · LIMS replace · GxP validation claims</p>
+              <p class="aside-note">
+                Simulation ranks methods for search. Confirm every method on the
+                instrument.
+              </p>
+            </aside>
+          </div>
         </div>
-        <div class="feature-card">
-          <svg class="feature-icon" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" stroke-width="1" />
-            <text x="20" y="25" text-anchor="middle" fill="currentColor" font-size="16" font-family="'SF Mono', 'IBM Plex Mono', ui-monospace, monospace">2</text>
-          </svg>
-          <h3 class="feature-title">Simulate</h3>
-          <p class="feature-desc">
-            Deterministic LSS retention model and peak-width calculation. No
-            hallucinated metrics.
-          </p>
+
+        <div id="product-gateway" class="product-block product-block-secondary">
+          <div class="product-layout">
+            <div class="product-copy">
+              <p class="product-name">Chemistry Data Gateway</p>
+              <h2 class="product-heading">
+                Ready chemistry data for AI agents.
+              </h2>
+              <p class="product-body">
+                AI agents struggle to pull correct chemistry data from messy,
+                incomplete sources. Chemistry Data Gateway delivers curated,
+                processed scientific data through a reliable gateway built for
+                agent consumption—so models work from ground truth, not guesswork.
+              </p>
+              <ul class="product-points">
+                <li>Processed chemistry data ready for agent workflows</li>
+                <li>Consistent, inspectable sources instead of brittle scrapes</li>
+                <li>Gateway access designed for AI systems, not just human UIs</li>
+              </ul>
+            </div>
+            <aside class="product-aside" aria-label="Gateway focus">
+              <p class="aside-label">Problem</p>
+              <p class="aside-text">
+                Agents misread or miss chemistry data when sources are raw,
+                fragmented, or poorly structured.
+              </p>
+              <p class="aside-label">What we provide</p>
+              <p class="aside-text">
+                Agent-ready gateway data—curated, processed, and reliable.
+              </p>
+            </aside>
+          </div>
         </div>
-        <div class="feature-card">
-          <svg class="feature-icon" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" stroke-width="1" />
-            <text x="20" y="25" text-anchor="middle" fill="currentColor" font-size="16" font-family="'SF Mono', 'IBM Plex Mono', ui-monospace, monospace">3</text>
-          </svg>
-          <h3 class="feature-title">Score</h3>
-          <p class="feature-desc">
-            Resolution, run time, and penalty scoring against your targets.
-            Pass/fail is code, not opinion.
-          </p>
-        </div>
-      </div>
       </div>
     </section>
 
-    <!-- WHY IT MATTERS SECTION -->
+    <section id="features" class="features">
+      <div class="features-inner">
+        <p class="section-title">How it works</p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <svg class="feature-icon" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" stroke-width="1" />
+              <text x="20" y="25" text-anchor="middle" fill="currentColor" font-size="16" font-family="'SF Mono', 'IBM Plex Mono', ui-monospace, monospace">1</text>
+            </svg>
+            <h3 class="feature-title">Propose</h3>
+            <p class="feature-desc">
+              Agent generates HPLC method parameters (column, gradient, flow,
+              temperature) within instrument constraints.
+            </p>
+          </div>
+          <div class="feature-card">
+            <svg class="feature-icon" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" stroke-width="1" />
+              <text x="20" y="25" text-anchor="middle" fill="currentColor" font-size="16" font-family="'SF Mono', 'IBM Plex Mono', ui-monospace, monospace">2</text>
+            </svg>
+            <h3 class="feature-title">Simulate</h3>
+            <p class="feature-desc">
+              Deterministic LSS retention model and peak-width calculation. No
+              hallucinated metrics.
+            </p>
+          </div>
+          <div class="feature-card">
+            <svg class="feature-icon" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" stroke-width="1" />
+              <text x="20" y="25" text-anchor="middle" fill="currentColor" font-size="16" font-family="'SF Mono', 'IBM Plex Mono', ui-monospace, monospace">3</text>
+            </svg>
+            <h3 class="feature-title">Score</h3>
+            <p class="feature-desc">
+              Resolution, run time, and penalty scoring against your targets.
+              Pass/fail is code, not opinion.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="why" class="why">
       <div class="why-inner">
         <p class="section-title">Why it matters</p>
@@ -202,15 +273,118 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
       </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-      <p class="footer-text">Built for the Meta Global AI Hackathon 2026</p>
+    <section id="company" class="company">
+      <div class="company-inner">
+        <p class="section-title">Company</p>
+        <div class="company-layout">
+          <div>
+            <h2 class="company-heading">
+              Analytical agents—and the chemistry data they need.
+            </h2>
+            <p class="company-body">
+              Chumba Labs builds two products for scientific AI. Method
+              Development compresses HPLC and GC-MS decision cycles with
+              tool-grounded proposals analysts can take to the bench. Chemistry
+              Data Gateway gives AI agents curated, processed chemistry data so
+              they stop failing on incomplete or incorrect sources.
+            </p>
+          </div>
+          <dl class="company-facts">
+            <div>
+              <dt>Products</dt>
+              <dd>
+                Method Development · Chemistry Data Gateway
+              </dd>
+            </div>
+            <div>
+              <dt>Focus</dt>
+              <dd>
+                Separation science agents and agent-ready chemistry data
+              </dd>
+            </div>
+            <div>
+              <dt>Approach</dt>
+              <dd>Tool-grounded systems with inspectable numbers</dd>
+            </div>
+            <div>
+              <dt>Contact</dt>
+              <dd><a href="mailto:hello@chumbalabs.com">hello@chumbalabs.com</a></dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer" id="contact">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <p class="footer-mark">Chumba Labs</p>
+          <p class="footer-tagline">
+            Method development agents and chemistry data for AI.
+            Grounded numbers. Agent-ready data.
+          </p>
+        </div>
+
+        <div class="footer-cols">
+          <div class="footer-col">
+            <p class="footer-heading">Products</p>
+            <a href="#product-method">Method Development</a>
+            <a href="#product-gateway">Chemistry Data Gateway</a>
+            <a href="#features">How it works</a>
+            <button type="button" class="footer-link-btn" @click="emit('launch')">Workbench</button>
+            <a
+              href="https://github.com/chumbacash/chumba_labs"
+              target="_blank"
+              rel="noopener"
+              >Open source</a
+            >
+          </div>
+          <div class="footer-col">
+            <p class="footer-heading">Company</p>
+            <a href="#company">About</a>
+            <a href="#why">Why it matters</a>
+            <a href="mailto:hello@chumbalabs.com">Contact</a>
+          </div>
+          <div class="footer-col">
+            <p class="footer-heading">Resources</p>
+            <a
+              href="https://github.com/chumbacash/chumba_labs"
+              target="_blank"
+              rel="noopener"
+              >GitHub</a
+            >
+            <a
+              href="https://github.com/chumbacash/chumba_labs#readme"
+              target="_blank"
+              rel="noopener"
+              >Documentation</a
+            >
+            <a
+              href="https://github.com/chumbacash/chumba_labs/issues"
+              target="_blank"
+              rel="noopener"
+              >Support</a
+            >
+          </div>
+          <div class="footer-col">
+            <p class="footer-heading">Legal</p>
+            <p class="footer-legal-note">
+              Simulation aids method search. Confirm methods on instrument.
+              Not a GxP or 21 CFR Part 11 system.
+            </p>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p class="footer-copy">© {{ year }} Chumba Labs. All rights reserved.</p>
+          <p class="footer-copy">Built for analytical scientists.</p>
+        </div>
+      </div>
     </footer>
   </div>
 </template>
 
 <style scoped>
-/* ───────── CSS Variables ───────── */
 .landing {
   --bg: #fafafa;
   --bg-alt: #ffffff;
@@ -230,7 +404,6 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   overflow-x: hidden;
 }
 
-/* ───────── NAV BAR, same language as the workbench header ───────── */
 .nav-bar {
   position: sticky;
   top: 0;
@@ -316,7 +489,6 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   border-color: #2b2b31;
 }
 
-/* ───────── HERO ───────── */
 .hero {
   position: relative;
   min-height: calc(100vh - 56px);
@@ -342,8 +514,8 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   padding-left: 0;
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), 
-              transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-content.visible {
@@ -417,7 +589,6 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   letter-spacing: 0.01em;
 }
 
-/* ───────── Chromatogram decoration ───────── */
 .chromatogram {
   position: absolute;
   right: 0;
@@ -430,15 +601,32 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   z-index: 1;
 }
 
-/* ───────── FEATURES ───────── */
-.features {
-  background: var(--bg-alt);
+.product,
+.features,
+.why,
+.company {
   border-top: 1px solid var(--border);
   padding: 4rem 1rem;
   scroll-margin-top: 56px;
 }
 
-.features-inner {
+.product,
+.company {
+  background: var(--bg);
+}
+
+.features {
+  background: var(--bg-alt);
+}
+
+.why {
+  background: var(--bg);
+}
+
+.product-inner,
+.features-inner,
+.why-inner,
+.company-inner {
   max-width: 1280px;
   margin: 0 auto;
 }
@@ -453,6 +641,115 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   margin: 0 0 var(--space-2xl) 0;
 }
 
+.product-block {
+  scroll-margin-top: 56px;
+}
+
+.product-block-secondary {
+  margin-top: 3.5rem;
+  padding-top: 3.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.product-layout,
+.company-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.8fr);
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.product-name {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.75rem 0;
+}
+
+.product-heading,
+.company-heading {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+}
+
+.product-body,
+.company-body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin: 0 0 1.25rem 0;
+  max-width: 42rem;
+}
+
+.product-points {
+  margin: 0 0 1.75rem 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.product-points li {
+  position: relative;
+  padding-left: 1rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+.product-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.product-aside {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.35rem;
+}
+
+.aside-label {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 0.35rem 0;
+}
+
+.aside-label + .aside-text + .aside-label {
+  margin-top: 1.1rem;
+}
+
+.aside-text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+
+.aside-note {
+  margin: 1.25rem 0 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
 .features-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -464,6 +761,14 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: var(--space-xl);
+}
+
+.features .feature-card {
+  background: var(--bg);
+}
+
+.why .feature-card {
+  background: var(--bg-alt);
 }
 
 .feature-icon {
@@ -488,19 +793,6 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   margin: 0;
 }
 
-/* ───────── WHY IT MATTERS ───────── */
-.why {
-  background: var(--bg);
-  border-top: 1px solid var(--border);
-  padding: 4rem 1rem;
-  scroll-margin-top: 56px;
-}
-
-.why-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
 .why-lede {
   font-size: 1.35rem;
   font-weight: 600;
@@ -511,30 +803,150 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   margin: 0 0 2rem 0;
 }
 
-.why .features-grid {
-  margin-bottom: 0;
-}
-
-/* ───────── FOOTER ───────── */
-.footer {
-  background: var(--bg-alt);
-  border-top: 1px solid var(--border);
-  padding: 2.5rem 1rem;
-  text-align: center;
-}
-
-.footer-text {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-muted);
+.company-facts {
   margin: 0;
-  letter-spacing: 0.02em;
+  display: grid;
+  gap: 1.1rem;
 }
 
-/* ───────── Responsive ───────── */
+.company-facts div {
+  border-top: 1px solid var(--border);
+  padding-top: 0.85rem;
+}
+
+.company-facts dt {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 0.3rem 0;
+}
+
+.company-facts dd {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.company-facts a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.company-facts a:hover {
+  text-decoration: underline;
+}
+
+.footer {
+  background: #131316;
+  color: #d4d4d8;
+  padding: 3.5rem 1rem 1.75rem;
+}
+
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.footer-brand {
+  max-width: 28rem;
+  margin-bottom: 2.5rem;
+}
+
+.footer-mark {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 0.75rem 0;
+}
+
+.footer-tagline {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #a1a1aa;
+}
+
+.footer-cols {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.75rem;
+  padding-bottom: 2.25rem;
+  border-bottom: 1px solid #2b2b31;
+}
+
+.footer-heading {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 0.9rem 0;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.footer-col a,
+.footer-link-btn {
+  font-size: 0.88rem;
+  color: #a1a1aa;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.footer-col a:hover,
+.footer-link-btn:hover {
+  color: #fff;
+}
+
+.footer-legal-note {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #8e8e96;
+  max-width: 18rem;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 1.25rem;
+}
+
+.footer-copy {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: #71717a;
+}
+
 @media (max-width: 968px) {
   .nav-center {
     display: none;
+  }
+
+  .product-layout,
+  .company-layout,
+  .footer-cols {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -561,11 +973,17 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
     font-size: 0.95rem;
   }
 
-  .features {
+  .product,
+  .features,
+  .why,
+  .company {
     padding: 3rem 1.5rem;
   }
 
-  .features-grid {
+  .features-grid,
+  .product-layout,
+  .company-layout,
+  .footer-cols {
     grid-template-columns: 1fr;
   }
 
@@ -576,6 +994,22 @@ const peak3Points = gaussianPeakPoints(460, 20, 90, chromBaseline, 390, 530)
   .chromatogram {
     width: 90%;
     opacity: 0.08;
+  }
+
+  .footer {
+    padding: 3rem 1.5rem 1.5rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-content {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 </style>

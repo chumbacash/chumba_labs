@@ -156,7 +156,7 @@ function stepError(output: unknown): string | null {
     </ol>
 
     <section v-if="explanation" class="muse-block">
-      <h3>Agent decision (Muse Spark)</h3>
+      <h3>Agent decision</h3>
       <!-- eslint-disable-next-line vue/no-v-html -->
       <div class="muse-text" v-html="formatExplanation(explanation)"></div>
     </section>

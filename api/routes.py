@@ -153,7 +153,7 @@ def hplc_run_from_body(body: dict[str, Any]) -> tuple[int, dict[str, Any]]:
         return 400, {"error": "follow_up must be a string"}
     follow_up = follow_up.strip() if follow_up else None
     if follow_up and not meta_model_api_key():
-        return 400, {"error": "Follow-up instructions require the Meta Model API key"}
+        return 400, {"error": "Follow-up instructions require a model API key"}
     try:
         result = run_hplc_iteration(goals, user_instruction=follow_up)
     except RuntimeError as exc:
